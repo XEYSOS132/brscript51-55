@@ -1,328 +1,381 @@
 (function () {
     'use strict';
-try {
-    (function () {
-        const STORAGE_KEY = 'br_topnav_51_55_servers';
+    try {
+        (function () {
+            const STORAGE_KEY = 'br_topnav_51_55_selected';
 
-        const DATA_TECH = [
-            { id: 51, text: 'TULA (51)', link: 'https://forum.blackrussia.online/forums/Технический-раздел-tula.2262/', color: '#8B008B' },
-            { id: 52, text: 'RYAZAN (52)', link: 'https://forum.blackrussia.online/forums/Технический-раздел-ryazan.2304/', color: '#8B008B' },
-            { id: 53, text: 'MURMANSK (53)', link: 'https://forum.blackrussia.online/forums/Технический-раздел-murmansk.2346/', color: '#8B008B' },
-            { id: 54, text: 'PENZA (54)', link: 'https://forum.blackrussia.online/forums/Технический-раздел-penza.2388/', color: '#8B008B' },
-            { id: 55, text: 'KURSK (55)', link: 'https://forum.blackrussia.online/forums/Технический-раздел-kursk.2430/', color: '#8B008B' },
-        ];
-
-        const DATA_TECH_COMPLAINT = [
-            { id: 51, text: 'TULA (51)', link: 'https://forum.blackrussia.online/forums/Сервер-№51-tula.2261/', color: '#0000CD' },
-            { id: 52, text: 'RYAZAN (52)', link: 'https://forum.blackrussia.online/forums/Сервер-№52-ryazan.2303/', color: '#0000CD' },
-            { id: 53, text: 'MURMANSK (53)', link: 'https://forum.blackrussia.online/forums/Сервер-№53-murmansk.2345/', color: '#0000CD' },
-            { id: 54, text: 'PENZA (54)', link: 'https://forum.blackrussia.online/forums/Сервер-№54-penza.2387/', color: '#0000CD' },
-            { id: 55, text: 'KURSK (55)', link: 'https://forum.blackrussia.online/forums/Сервер-№55-kursk.2429/', color: '#0000CD' },
-        ];
-
-        const DATA_PLAYER_COMPLAINT = [
-            { id: 51, text: 'TULA (51)', link: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2290/', color: '#DC143C' },
-            { id: 52, text: 'RYAZAN (52)', link: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2332/', color: '#DC143C' },
-            { id: 53, text: 'MURMANSK (53)', link: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2374/', color: '#DC143C' },
-            { id: 54, text: 'PENZA (54)', link: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2416/', color: '#DC143C' },
-            { id: 55, text: 'KURSK (55)', link: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2458/', color: '#DC143C' },
-        ];
-
-        const OPS_LINK = {
-            text: 'ОПС',
-            link: 'https://forum.blackrussia.online/threads/%D0%9E%D0%B1%D1%89%D0%B8%D0%B5-%D0%BF%D1%80%D0%B0%D0%B2%D0%B8%D0%BB%D0%B0-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%BE%D0%B2.312571/',
-            color: '#f59e0b'
-        };
-
-        const ALL_SERVERS = [51, 52, 53, 54, 55];
-
-        function getSelectedServers() {
-            try {
-                const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-                if (Array.isArray(saved)) {
-                    const valid = saved.map(Number).filter(id => ALL_SERVERS.includes(id));
-                    return valid.length ? valid : ALL_SERVERS;
+            const SERVERS = [
+                {
+                    id: 51,
+                    name: 'TULA',
+                    techComplaint: 'https://forum.blackrussia.online/forums/Сервер-№51-tula.2261/',
+                    tech: 'https://forum.blackrussia.online/forums/Технический-раздел-tula.2262/',
+                    playerComplaint: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2290/'
+                },
+                {
+                    id: 52,
+                    name: 'RYAZAN',
+                    techComplaint: 'https://forum.blackrussia.online/forums/Сервер-№52-ryazan.2303/',
+                    tech: 'https://forum.blackrussia.online/forums/Технический-раздел-ryazan.2304/',
+                    playerComplaint: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2332/'
+                },
+                {
+                    id: 53,
+                    name: 'MURMANSK',
+                    techComplaint: 'https://forum.blackrussia.online/forums/Сервер-№53-murmansk.2345/',
+                    tech: 'https://forum.blackrussia.online/forums/Технический-раздел-murmansk.2346/',
+                    playerComplaint: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2374/'
+                },
+                {
+                    id: 54,
+                    name: 'PENZA',
+                    techComplaint: 'https://forum.blackrussia.online/forums/Сервер-№54-penza.2387/',
+                    tech: 'https://forum.blackrussia.online/forums/Технический-раздел-penza.2388/',
+                    playerComplaint: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2416/'
+                },
+                {
+                    id: 55,
+                    name: 'KURSK',
+                    techComplaint: 'https://forum.blackrussia.online/forums/Сервер-№55-kursk.2429/',
+                    tech: 'https://forum.blackrussia.online/forums/Технический-раздел-kursk.2430/',
+                    playerComplaint: 'https://forum.blackrussia.online/forums/Жалобы-на-игроков.2458/'
                 }
-            } catch (e) {}
-            return ALL_SERVERS;
-        }
+            ];
 
-        function saveSelectedServers(ids) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
-        }
+            const OPS_LINK = 'https://forum.blackrussia.online/threads/%D0%9E%D0%B1%D1%89%D0%B8%D0%B5-%D0%BF%D1%80%D0%B0%D0%B2%D0%B8%D0%BB%D0%B0-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%BE%D0%B2.312571/';
 
-        function findTopNav() {
-            return document.querySelector('.p-nav-list')
-                || document.querySelector('.p-sectionLinks-list')
-                || document.querySelector('.p-nav-scroller .hScroller-scroll')
-                || document.querySelector('.p-navgroup');
-        }
-
-        function createLink(text, href, color) {
-            const a = document.createElement('a');
-            a.className = 'br-topnav-btn';
-            a.textContent = text;
-            a.href = href;
-            a.target = '_blank';
-            a.style.borderBottom = `2px solid ${color}`;
-
-            if (window.location.href.includes(href)) {
-                a.classList.add('active');
+            function normalizeText(text) {
+                return String(text || '').replace(/\s+/g, ' ').trim();
             }
 
-            return a;
-        }
-
-        function createSettingsButton() {
-            const btn = document.createElement('button');
-            btn.className = 'br-topnav-btn br-topnav-settings';
-            btn.type = 'button';
-            btn.textContent = '⚙';
-            btn.title = 'Выбор серверов';
-            btn.onclick = openSettings;
-            return btn;
-        }
-
-        function renderTopButtons() {
-            if (document.querySelector('.br-topnav-wrap')) return;
-
-            const nav = findTopNav();
-            if (!nav) return;
-
-            const selected = getSelectedServers();
-
-            const holder = document.createElement('div');
-            holder.className = 'br-topnav-wrap';
-
-            selected.forEach(serverId => {
-                const techComplaint = DATA_TECH_COMPLAINT.find(x => x.id === serverId);
-                const tech = DATA_TECH.find(x => x.id === serverId);
-                const playerComplaint = DATA_PLAYER_COMPLAINT.find(x => x.id === serverId);
-
-                if (techComplaint) {
-                    holder.appendChild(createLink(`ТЖБ${serverId}`, techComplaint.link, techComplaint.color));
-                }
-
-                if (tech) {
-                    holder.appendChild(createLink(`Т${serverId}`, tech.link, tech.color));
-                }
-
-                if (playerComplaint) {
-                    holder.appendChild(createLink(`ЖБ${serverId}`, playerComplaint.link, playerComplaint.color));
-                }
-            });
-
-            holder.appendChild(createLink(OPS_LINK.text, OPS_LINK.link, OPS_LINK.color));
-            holder.appendChild(createSettingsButton());
-
-            if (nav.tagName === 'UL') {
-                const li = document.createElement('li');
-                li.className = 'p-navEl br-topnav-li';
-                li.appendChild(holder);
-                nav.appendChild(li);
-            } else {
-                nav.appendChild(holder);
+            function isVisible(el) {
+                if (!el) return false;
+                const r = el.getBoundingClientRect();
+                return r.width > 0 && r.height > 0;
             }
-        }
 
-        function openSettings() {
-            let overlay = document.querySelector('.br-topnav-modal-overlay');
+            function getSelectedServers() {
+                try {
+                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+                    if (Array.isArray(saved)) {
+                        const valid = saved.map(Number).filter(id => SERVERS.some(s => s.id === id));
+                        return valid.length ? valid : SERVERS.map(s => s.id);
+                    }
+                } catch (e) {}
+                return SERVERS.map(s => s.id);
+            }
 
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.className = 'br-topnav-modal-overlay';
-                overlay.innerHTML = `
-                    <div class="br-topnav-modal">
-                        <div class="br-topnav-modal-title">Выбор серверов</div>
-                        <div class="br-topnav-modal-body"></div>
-                        <div class="br-topnav-modal-footer">
-                            <button type="button" class="br-topnav-cancel">Отмена</button>
-                            <button type="button" class="br-topnav-save">Сохранить</button>
+            function saveSelectedServers(ids) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+            }
+
+            function findModerLink() {
+                const links = Array.from(document.querySelectorAll('a'));
+                return links.find(a => normalizeText(a.textContent).includes('Модер') && isVisible(a));
+            }
+
+            function findTopMenuByModer() {
+                const moderLink = findModerLink();
+                if (!moderLink) return null;
+
+                return moderLink.closest('ul')
+                    || moderLink.closest('.hScroller-scroll')
+                    || moderLink.closest('.p-sectionLinks-list')
+                    || moderLink.closest('.p-nav-list')
+                    || moderLink.closest('.p-navgroup')
+                    || moderLink.parentElement;
+            }
+
+            function makeButton(text, href, color) {
+                const a = document.createElement('a');
+                a.className = 'br-topnav-btn';
+                a.textContent = text;
+                a.href = href;
+                a.target = '_blank';
+                a.style.borderBottom = '2px solid ' + color;
+                return a;
+            }
+
+            function makeSettingsButton() {
+                const btn = document.createElement('button');
+                btn.className = 'br-topnav-btn br-topnav-settings';
+                btn.type = 'button';
+                btn.textContent = '⚙';
+                btn.title = 'Выбор серверов';
+                btn.addEventListener('click', openSettings);
+                return btn;
+            }
+
+            function removeOldButtons() {
+                document.querySelectorAll('.br-topnav-item, .br-topnav-wrap').forEach(el => el.remove());
+            }
+
+            function renderTopButtons() {
+                const moderLink = findModerLink();
+                const menu = findTopMenuByModer();
+
+                if (!moderLink || !menu) return false;
+
+                removeOldButtons();
+
+                const selected = getSelectedServers();
+                const buttons = [];
+
+                selected.forEach(id => {
+                    const s = SERVERS.find(server => server.id === id);
+                    if (!s) return;
+
+                    buttons.push(makeButton('ТЖБ' + id, s.techComplaint, '#0000CD'));
+                    buttons.push(makeButton('Т' + id, s.tech, '#8B008B'));
+                    buttons.push(makeButton('ЖБ' + id, s.playerComplaint, '#DC143C'));
+                });
+
+                buttons.push(makeButton('ОПС', OPS_LINK, '#f59e0b'));
+                buttons.push(makeSettingsButton());
+
+                const moderItem = moderLink.closest('li') || moderLink;
+
+                if (menu.tagName === 'UL') {
+                    let last = moderItem;
+
+                    buttons.forEach(btn => {
+                        const li = document.createElement('li');
+                        li.className = 'p-navEl br-topnav-item';
+                        li.appendChild(btn);
+
+                        if (last && last.parentNode === menu) {
+                            last.after(li);
+                        } else {
+                            menu.appendChild(li);
+                        }
+
+                        last = li;
+                    });
+                } else {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'br-topnav-wrap';
+                    buttons.forEach(btn => wrap.appendChild(btn));
+
+                    if (moderItem && moderItem.parentNode) {
+                        moderItem.after(wrap);
+                    } else {
+                        menu.appendChild(wrap);
+                    }
+                }
+
+                return true;
+            }
+
+            function openSettings() {
+                let overlay = document.querySelector('.br-topnav-modal-overlay');
+
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.className = 'br-topnav-modal-overlay';
+                    overlay.innerHTML = `
+                        <div class="br-topnav-modal">
+                            <div class="br-topnav-modal-title">Выбор серверов</div>
+                            <div class="br-topnav-modal-body"></div>
+                            <div class="br-topnav-modal-footer">
+                                <button type="button" class="br-topnav-cancel">Отмена</button>
+                                <button type="button" class="br-topnav-save">Сохранить</button>
+                            </div>
                         </div>
-                    </div>
+                    `;
+                    document.body.appendChild(overlay);
+
+                    overlay.querySelector('.br-topnav-cancel').onclick = () => overlay.classList.remove('show');
+
+                    overlay.querySelector('.br-topnav-save').onclick = () => {
+                        const checked = Array.from(overlay.querySelectorAll('input:checked'))
+                            .map(input => Number(input.value))
+                            .sort((a, b) => a - b);
+
+                        saveSelectedServers(checked);
+                        overlay.classList.remove('show');
+                        renderTopButtons();
+                    };
+
+                    overlay.onclick = (e) => {
+                        if (e.target === overlay) overlay.classList.remove('show');
+                    };
+                }
+
+                const selected = getSelectedServers();
+                const body = overlay.querySelector('.br-topnav-modal-body');
+                body.innerHTML = '';
+
+                SERVERS.forEach(s => {
+                    const label = document.createElement('label');
+                    label.className = 'br-topnav-check';
+                    label.innerHTML = `
+                        <input type="checkbox" value="${s.id}" ${selected.includes(s.id) ? 'checked' : ''}>
+                        ${s.name} (${s.id})
+                    `;
+                    body.appendChild(label);
+                });
+
+                overlay.classList.add('show');
+            }
+
+            function addStyle() {
+                if (document.querySelector('#br-topnav-style')) return;
+
+                const style = document.createElement('style');
+                style.id = 'br-topnav-style';
+                style.textContent = `
+                    .br-topnav-item {
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        list-style: none !important;
+                    }
+
+                    .br-topnav-wrap {
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        gap: 5px !important;
+                        margin-left: 10px !important;
+                        flex-wrap: wrap !important;
+                        vertical-align: middle !important;
+                    }
+
+                    .br-topnav-btn {
+                        display: inline-flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        min-height: 29px !important;
+                        padding: 0 8px !important;
+                        margin: 0 2px !important;
+                        border-radius: 3px !important;
+                        background: rgba(255,255,255,0.06) !important;
+                        color: #ddd !important;
+                        font-family: inherit !important;
+                        font-size: 12px !important;
+                        font-weight: 700 !important;
+                        text-decoration: none !important;
+                        white-space: nowrap !important;
+                        cursor: pointer !important;
+                        border-top: 0 !important;
+                        border-left: 0 !important;
+                        border-right: 0 !important;
+                    }
+
+                    .br-topnav-btn:hover {
+                        background: rgba(255,255,255,0.16) !important;
+                        color: #fff !important;
+                        text-decoration: none !important;
+                    }
+
+                    .br-topnav-settings {
+                        border: 0 !important;
+                        background: rgba(245,158,11,0.18) !important;
+                        color: #fbbf24 !important;
+                    }
+
+                    .br-topnav-modal-overlay {
+                        position: fixed !important;
+                        inset: 0 !important;
+                        display: none !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        background: rgba(0,0,0,0.72) !important;
+                        z-index: 2147483647 !important;
+                    }
+
+                    .br-topnav-modal-overlay.show {
+                        display: flex !important;
+                    }
+
+                    .br-topnav-modal {
+                        width: 340px !important;
+                        background: #181818 !important;
+                        border: 1px solid #333 !important;
+                        border-radius: 10px !important;
+                        box-shadow: 0 15px 45px rgba(0,0,0,0.75) !important;
+                        padding: 15px !important;
+                        color: #fff !important;
+                        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+                    }
+
+                    .br-topnav-modal-title {
+                        font-size: 16px !important;
+                        font-weight: 700 !important;
+                        margin-bottom: 12px !important;
+                    }
+
+                    .br-topnav-modal-body {
+                        display: grid !important;
+                        grid-template-columns: repeat(2, 1fr) !important;
+                        gap: 8px !important;
+                        margin-bottom: 15px !important;
+                    }
+
+                    .br-topnav-check {
+                        display: flex !important;
+                        align-items: center !important;
+                        gap: 7px !important;
+                        padding: 8px !important;
+                        border-radius: 6px !important;
+                        background: #222 !important;
+                        color: #ddd !important;
+                        cursor: pointer !important;
+                        user-select: none !important;
+                    }
+
+                    .br-topnav-check input {
+                        accent-color: #2563eb !important;
+                    }
+
+                    .br-topnav-modal-footer {
+                        display: flex !important;
+                        justify-content: flex-end !important;
+                        gap: 8px !important;
+                    }
+
+                    .br-topnav-modal-footer button {
+                        padding: 7px 12px !important;
+                        border: none !important;
+                        border-radius: 6px !important;
+                        cursor: pointer !important;
+                        font-weight: 700 !important;
+                    }
+
+                    .br-topnav-cancel {
+                        background: #333 !important;
+                        color: #ddd !important;
+                    }
+
+                    .br-topnav-save {
+                        background: #2563eb !important;
+                        color: #fff !important;
+                    }
                 `;
-                document.body.appendChild(overlay);
-
-                overlay.querySelector('.br-topnav-cancel').onclick = () => {
-                    overlay.classList.remove('show');
-                };
-
-                overlay.querySelector('.br-topnav-save').onclick = () => {
-                    const checked = Array.from(overlay.querySelectorAll('input:checked'))
-                        .map(input => Number(input.value))
-                        .sort((a, b) => a - b);
-
-                    saveSelectedServers(checked);
-
-                    const old = document.querySelector('.br-topnav-li') || document.querySelector('.br-topnav-wrap');
-                    if (old) old.remove();
-
-                    renderTopButtons();
-                    overlay.classList.remove('show');
-                };
-
-                overlay.onclick = (e) => {
-                    if (e.target === overlay) overlay.classList.remove('show');
-                };
+                document.head.appendChild(style);
             }
 
-            const body = overlay.querySelector('.br-topnav-modal-body');
-            const selected = getSelectedServers();
-            body.innerHTML = '';
+            function startTopNav() {
+                addStyle();
 
-            ALL_SERVERS.forEach(id => {
-                const label = document.createElement('label');
-                label.className = 'br-topnav-check';
-                label.innerHTML = `
-                    <input type="checkbox" value="${id}" ${selected.includes(id) ? 'checked' : ''}>
-                    Сервер ${id}
-                `;
-                body.appendChild(label);
-            });
+                let tries = 0;
+                const timer = setInterval(() => {
+                    tries += 1;
 
-            overlay.classList.add('show');
-        }
-
-        const style = document.createElement('style');
-        style.textContent = `
-            .br-topnav-li {
-                display: flex !important;
-                align-items: center !important;
+                    if (renderTopButtons() || tries >= 80) {
+                        clearInterval(timer);
+                    }
+                }, 250);
             }
 
-            .br-topnav-wrap {
-                display: flex !important;
-                align-items: center !important;
-                gap: 6px !important;
-                margin-left: 10px !important;
-                flex-wrap: wrap !important;
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', startTopNav);
+            } else {
+                startTopNav();
             }
+        })();
+    } catch (e) {
+        console.error('[BR Script] Top Nav Error:', e);
+    }
 
-            .br-topnav-btn {
-                display: inline-flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                min-height: 28px !important;
-                padding: 0 9px !important;
-                border-radius: 4px !important;
-                background: rgba(255, 255, 255, 0.06) !important;
-                color: #d7d7d7 !important;
-                font-size: 12px !important;
-                font-weight: 700 !important;
-                text-decoration: none !important;
-                border-top: 0 !important;
-                border-left: 0 !important;
-                border-right: 0 !important;
-                cursor: pointer !important;
-                white-space: nowrap !important;
-                transition: 0.15s !important;
-            }
-
-            .br-topnav-btn:hover,
-            .br-topnav-btn.active {
-                background: rgba(255, 255, 255, 0.16) !important;
-                color: #ffffff !important;
-            }
-
-            .br-topnav-settings {
-                border: none !important;
-                background: rgba(245, 158, 11, 0.18) !important;
-                color: #fbbf24 !important;
-            }
-
-            .br-topnav-modal-overlay {
-                position: fixed !important;
-                inset: 0 !important;
-                display: none !important;
-                align-items: center !important;
-                justify-content: center !important;
-                background: rgba(0, 0, 0, 0.7) !important;
-                z-index: 2147483647 !important;
-            }
-
-            .br-topnav-modal-overlay.show {
-                display: flex !important;
-            }
-
-            .br-topnav-modal {
-                width: 320px !important;
-                background: #181818 !important;
-                border: 1px solid #333 !important;
-                border-radius: 10px !important;
-                box-shadow: 0 15px 45px rgba(0,0,0,0.7) !important;
-                padding: 15px !important;
-                color: #fff !important;
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-            }
-
-            .br-topnav-modal-title {
-                font-size: 16px !important;
-                font-weight: 700 !important;
-                margin-bottom: 12px !important;
-            }
-
-            .br-topnav-modal-body {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 8px !important;
-                margin-bottom: 15px !important;
-            }
-
-            .br-topnav-check {
-                display: flex !important;
-                align-items: center !important;
-                gap: 7px !important;
-                padding: 7px !important;
-                border-radius: 6px !important;
-                background: #222 !important;
-                color: #ddd !important;
-                cursor: pointer !important;
-                user-select: none !important;
-            }
-
-            .br-topnav-check input {
-                accent-color: #2563eb !important;
-            }
-
-            .br-topnav-modal-footer {
-                display: flex !important;
-                justify-content: flex-end !important;
-                gap: 8px !important;
-            }
-
-            .br-topnav-modal-footer button {
-                padding: 7px 12px !important;
-                border: none !important;
-                border-radius: 6px !important;
-                cursor: pointer !important;
-                font-weight: 700 !important;
-            }
-
-            .br-topnav-cancel {
-                background: #333 !important;
-                color: #ddd !important;
-            }
-
-            .br-topnav-save {
-                background: #2563eb !important;
-                color: #fff !important;
-            }
-        `;
-        document.head.appendChild(style);
-
-        const waitNav = setInterval(() => {
-            const nav = findTopNav();
-            if (nav) {
-                clearInterval(waitNav);
-                renderTopButtons();
-            }
-        }, 300);
-
-        setTimeout(() => clearInterval(waitNav), 10000);
-    })();
-} catch (e) {
-    console.error('[BR Script] Top Nav Error:', e);
-}
 	if (document.body.dataset.forumButtonsLoaded) return;
     document.body.dataset.forumButtonsLoaded = 'true';
 	const UNACCEPT_PREFIX = 4; // префикс отказано
