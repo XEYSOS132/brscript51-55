@@ -292,7 +292,7 @@
                         background: transparent !important;
                         color: #d7d7d7 !important;
                         border: 0 !important;
-                        border-bottom: 2px solid #f59e0b !important;
+                        border-bottom: 0 !important;
                         font-family: inherit !important;
                         font-size: 13px !important;
                         font-weight: 600 !important;
@@ -301,8 +301,8 @@
                     }
 
                     .br-panel-main:hover {
-                        background: rgba(255,255,255,0.08) !important;
-                        color: #fff !important;
+                        background: transparent !important;
+                        color: #d7d7d7 !important;
                     }
 
                     .br-panel-menu {
