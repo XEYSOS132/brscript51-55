@@ -2,7 +2,7 @@
     'use strict';
     try {
         (function () {
-            const STORAGE_KEY = 'br_panel_servers_final_v4';
+            const STORAGE_KEY = 'br_panel_servers_final_v5';
 
             const SERVERS = [
                 {
@@ -76,8 +76,22 @@
                 return r.width > 0 && r.height > 0;
             }
 
+            function getTopNavScope() {
+                const moderLink = findModerLink();
+                if (!moderLink) return null;
+
+                const li = moderLink.closest('li');
+                if (li && li.parentElement) return li.parentElement;
+
+                return moderLink.closest('.p-sectionLinks-list, .p-nav-list, .hScroller-scroll, .p-sectionLinks, .p-nav, nav')
+                    || moderLink.parentElement;
+            }
+
             function hideInterferingNavButtons() {
-                const links = Array.from(document.querySelectorAll('a'));
+                const scope = getTopNavScope();
+                if (!scope) return;
+
+                const links = Array.from(scope.querySelectorAll('a'));
 
                 links.forEach(link => {
                     const text = textOf(link);
