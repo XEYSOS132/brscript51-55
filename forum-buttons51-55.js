@@ -2,7 +2,7 @@
     'use strict';
     try {
         (function () {
-            const STORAGE_KEY = 'br_panel_servers_final_v3';
+            const STORAGE_KEY = 'br_panel_servers_final_v4';
 
             const SERVERS = [
                 {
@@ -92,6 +92,19 @@
             function findModerLink() {
                 const links = Array.from(document.querySelectorAll('a'));
                 return links.find(a => visible(a) && textOf(a).toLowerCase().includes('модер')) || null;
+            }
+
+            function findNativePanelControl() {
+                const nodes = Array.from(document.querySelectorAll('a, button'));
+
+                return nodes.find(el => {
+                    if (!visible(el)) return false;
+                    if (el.classList.contains('br-panel-main')) return false;
+                    if (el.closest('.br-panel-item, .br-panel-wrap, .br-panel-menu')) return false;
+
+                    const text = textOf(el).toLowerCase();
+                    return text === 'панель управления' || text.includes('панель управления');
+                }) || null;
             }
 
             function findInsertPlace(moderLink) {
@@ -219,14 +232,14 @@
                 menu.appendChild(ops);
             }
 
-            function makePanelButton() {
+            function makePanelButton(buttonText) {
                 const wrap = document.createElement('div');
                 wrap.className = 'br-panel-wrap';
 
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'br-panel-main';
-                button.textContent = 'Панель управления';
+                button.textContent = buttonText || 'Панель управления';
 
                 button.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -241,17 +254,21 @@
             function renderPanel() {
                 hideInterferingNavButtons();
 
+                const nativePanel = findNativePanelControl();
                 const moderLink = findModerLink();
-                if (!moderLink) return false;
 
-                const place = findInsertPlace(moderLink);
+                const anchorElement = nativePanel || moderLink;
+                if (!anchorElement) return false;
+
+                const place = findInsertPlace(anchorElement);
                 if (!place) return false;
 
                 const oldMenuOpen = document.querySelector('.br-panel-menu.open');
 
                 removeOldPanel();
 
-                const panel = makePanelButton();
+                const panelText = nativePanel ? 'Меню управления' : 'Панель управления';
+                const panel = makePanelButton(panelText);
                 const selectedButtons = buildSelectedButtons();
 
                 if (place.type === 'list') {
