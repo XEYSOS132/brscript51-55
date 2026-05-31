@@ -44,16 +44,6 @@
 
             const OPS_LINK = 'https://forum.blackrussia.online/threads/%D0%9E%D0%B1%D1%89%D0%B8%D0%B5-%D0%BF%D1%80%D0%B0%D0%B2%D0%B8%D0%BB%D0%B0-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%BE%D0%B2.312571/';
 
-            function normalizeText(text) {
-                return String(text || '').replace(/\s+/g, ' ').trim();
-            }
-
-            function isVisible(el) {
-                if (!el) return false;
-                const r = el.getBoundingClientRect();
-                return r.width > 0 && r.height > 0;
-            }
-
             function getSelectedServers() {
                 try {
                     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
@@ -69,131 +59,181 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
             }
 
+            function textOf(el) {
+                return String(el && el.textContent || '').replace(/\s+/g, ' ').trim();
+            }
+
+            function visible(el) {
+                if (!el) return false;
+                const r = el.getBoundingClientRect();
+                return r.width > 0 && r.height > 0;
+            }
+
             function findModerLink() {
                 const links = Array.from(document.querySelectorAll('a'));
-                return links.find(a => normalizeText(a.textContent).includes('Модер') && isVisible(a));
+                return links.find(a => visible(a) && textOf(a).toLowerCase().includes('модер')) || null;
             }
 
-            function findTopMenuByModer() {
-                const moderLink = findModerLink();
+            function findInsertPlace(moderLink) {
                 if (!moderLink) return null;
 
-                return moderLink.closest('ul')
-                    || moderLink.closest('.hScroller-scroll')
-                    || moderLink.closest('.p-sectionLinks-list')
-                    || moderLink.closest('.p-nav-list')
-                    || moderLink.closest('.p-navgroup')
-                    || moderLink.parentElement;
+                const li = moderLink.closest('li');
+                if (li && li.parentElement) {
+                    return {
+                        type: 'list',
+                        menu: li.parentElement,
+                        after: li
+                    };
+                }
+
+                const parent = moderLink.parentElement;
+                if (parent) {
+                    return {
+                        type: 'plain',
+                        menu: parent,
+                        after: moderLink
+                    };
+                }
+
+                return null;
             }
 
-            function makeButton(text, href, color) {
+            function makeDropLink(text, href, color) {
                 const a = document.createElement('a');
-                a.className = 'br-topnav-btn';
+                a.className = 'br-panel-drop-link';
                 a.textContent = text;
                 a.href = href;
                 a.target = '_blank';
-                a.style.borderBottom = '2px solid ' + color;
+                a.style.borderLeft = '3px solid ' + color;
                 return a;
             }
 
-            function makeSettingsButton() {
-                const btn = document.createElement('button');
-                btn.className = 'br-topnav-btn br-topnav-settings';
-                btn.type = 'button';
-                btn.textContent = '⚙';
-                btn.title = 'Выбор серверов';
-                btn.addEventListener('click', openSettings);
-                return btn;
-            }
-
-            function removeOldButtons() {
-                document.querySelectorAll('.br-topnav-item, .br-topnav-wrap').forEach(el => el.remove());
-            }
-
-            function renderTopButtons() {
-                const moderLink = findModerLink();
-                const menu = findTopMenuByModer();
-
-                if (!moderLink || !menu) return false;
-
-                removeOldButtons();
+            function buildDropdownContent(drop) {
+                drop.innerHTML = '';
 
                 const selected = getSelectedServers();
-                const buttons = [];
 
                 selected.forEach(id => {
                     const s = SERVERS.find(server => server.id === id);
                     if (!s) return;
 
-                    buttons.push(makeButton('ТЖБ' + id, s.techComplaint, '#0000CD'));
-                    buttons.push(makeButton('Т' + id, s.tech, '#8B008B'));
-                    buttons.push(makeButton('ЖБ' + id, s.playerComplaint, '#DC143C'));
+                    const row = document.createElement('div');
+                    row.className = 'br-panel-row';
+
+                    row.appendChild(makeDropLink('ТЖБ' + id, s.techComplaint, '#0000CD'));
+                    row.appendChild(makeDropLink('Т' + id, s.tech, '#8B008B'));
+                    row.appendChild(makeDropLink('ЖБ' + id, s.playerComplaint, '#DC143C'));
+
+                    drop.appendChild(row);
                 });
 
-                buttons.push(makeButton('ОПС', OPS_LINK, '#f59e0b'));
-                buttons.push(makeSettingsButton());
+                const bottom = document.createElement('div');
+                bottom.className = 'br-panel-bottom';
 
-                const moderItem = moderLink.closest('li') || moderLink;
+                bottom.appendChild(makeDropLink('ОПС', OPS_LINK, '#f59e0b'));
 
-                if (menu.tagName === 'UL') {
-                    let last = moderItem;
+                const settings = document.createElement('button');
+                settings.type = 'button';
+                settings.className = 'br-panel-settings';
+                settings.textContent = '⚙ Настройки серверов';
+                settings.addEventListener('click', openSettings);
 
-                    buttons.forEach(btn => {
-                        const li = document.createElement('li');
-                        li.className = 'p-navEl br-topnav-item';
-                        li.appendChild(btn);
+                bottom.appendChild(settings);
+                drop.appendChild(bottom);
+            }
 
-                        if (last && last.parentNode === menu) {
-                            last.after(li);
-                        } else {
-                            menu.appendChild(li);
-                        }
+            function removeOldPanel() {
+                document.querySelectorAll('.br-panel-item, .br-panel-wrap, .br-topnav-item, .br-topnav-wrap').forEach(el => el.remove());
+            }
 
-                        last = li;
-                    });
-                } else {
-                    const wrap = document.createElement('div');
-                    wrap.className = 'br-topnav-wrap';
-                    buttons.forEach(btn => wrap.appendChild(btn));
+            function makePanelElement() {
+                const holder = document.createElement('div');
+                holder.className = 'br-panel-wrap';
 
-                    if (moderItem && moderItem.parentNode) {
-                        moderItem.after(wrap);
-                    } else {
-                        menu.appendChild(wrap);
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'br-panel-main';
+                button.textContent = 'Панель управления';
+
+                const drop = document.createElement('div');
+                drop.className = 'br-panel-dropdown';
+
+                buildDropdownContent(drop);
+
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    holder.classList.toggle('open');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!holder.contains(e.target)) {
+                        holder.classList.remove('open');
                     }
+                });
+
+                holder.appendChild(button);
+                holder.appendChild(drop);
+
+                return holder;
+            }
+
+            function renderPanel() {
+                const moderLink = findModerLink();
+                if (!moderLink) return false;
+
+                const place = findInsertPlace(moderLink);
+                if (!place) return false;
+
+                removeOldPanel();
+
+                const panel = makePanelElement();
+
+                if (place.type === 'list') {
+                    const li = document.createElement('li');
+                    li.className = 'p-navEl br-panel-item';
+                    li.appendChild(panel);
+
+                    if (place.after && place.after.parentNode === place.menu) {
+                        place.after.after(li);
+                    } else {
+                        place.menu.appendChild(li);
+                    }
+                } else {
+                    place.after.after(panel);
                 }
 
                 return true;
             }
 
             function openSettings() {
-                let overlay = document.querySelector('.br-topnav-modal-overlay');
+                let overlay = document.querySelector('.br-panel-modal-overlay');
 
                 if (!overlay) {
                     overlay = document.createElement('div');
-                    overlay.className = 'br-topnav-modal-overlay';
+                    overlay.className = 'br-panel-modal-overlay';
                     overlay.innerHTML = `
-                        <div class="br-topnav-modal">
-                            <div class="br-topnav-modal-title">Выбор серверов</div>
-                            <div class="br-topnav-modal-body"></div>
-                            <div class="br-topnav-modal-footer">
-                                <button type="button" class="br-topnav-cancel">Отмена</button>
-                                <button type="button" class="br-topnav-save">Сохранить</button>
+                        <div class="br-panel-modal">
+                            <div class="br-panel-modal-title">Выбор серверов</div>
+                            <div class="br-panel-modal-body"></div>
+                            <div class="br-panel-modal-footer">
+                                <button type="button" class="br-panel-cancel">Отмена</button>
+                                <button type="button" class="br-panel-save">Сохранить</button>
                             </div>
                         </div>
                     `;
                     document.body.appendChild(overlay);
 
-                    overlay.querySelector('.br-topnav-cancel').onclick = () => overlay.classList.remove('show');
+                    overlay.querySelector('.br-panel-cancel').onclick = () => overlay.classList.remove('show');
 
-                    overlay.querySelector('.br-topnav-save').onclick = () => {
+                    overlay.querySelector('.br-panel-save').onclick = () => {
                         const checked = Array.from(overlay.querySelectorAll('input:checked'))
                             .map(input => Number(input.value))
                             .sort((a, b) => a - b);
 
                         saveSelectedServers(checked);
                         overlay.classList.remove('show');
-                        renderTopButtons();
+                        renderPanel();
                     };
 
                     overlay.onclick = (e) => {
@@ -202,12 +242,12 @@
                 }
 
                 const selected = getSelectedServers();
-                const body = overlay.querySelector('.br-topnav-modal-body');
+                const body = overlay.querySelector('.br-panel-modal-body');
                 body.innerHTML = '';
 
                 SERVERS.forEach(s => {
                     const label = document.createElement('label');
-                    label.className = 'br-topnav-check';
+                    label.className = 'br-panel-check';
                     label.innerHTML = `
                         <input type="checkbox" value="${s.id}" ${selected.includes(s.id) ? 'checked' : ''}>
                         ${s.name} (${s.id})
@@ -219,60 +259,117 @@
             }
 
             function addStyle() {
-                if (document.querySelector('#br-topnav-style')) return;
+                if (document.querySelector('#br-panel-style')) return;
 
                 const style = document.createElement('style');
-                style.id = 'br-topnav-style';
+                style.id = 'br-panel-style';
                 style.textContent = `
-                    .br-topnav-item {
+                    .br-panel-item {
                         display: inline-flex !important;
                         align-items: center !important;
                         list-style: none !important;
+                        position: relative !important;
                     }
 
-                    .br-topnav-wrap {
+                    .br-panel-wrap {
+                        position: relative !important;
                         display: inline-flex !important;
                         align-items: center !important;
-                        gap: 5px !important;
-                        margin-left: 10px !important;
-                        flex-wrap: wrap !important;
-                        vertical-align: middle !important;
+                        margin-left: 4px !important;
                     }
 
-                    .br-topnav-btn {
+                    .br-panel-main {
                         display: inline-flex !important;
                         align-items: center !important;
                         justify-content: center !important;
-                        min-height: 29px !important;
-                        padding: 0 8px !important;
-                        margin: 0 2px !important;
-                        border-radius: 3px !important;
+                        min-height: 36px !important;
+                        padding: 0 14px !important;
+                        background: transparent !important;
+                        color: #d7d7d7 !important;
+                        border: 0 !important;
+                        border-bottom: 2px solid #f59e0b !important;
+                        font-family: inherit !important;
+                        font-size: 13px !important;
+                        font-weight: 600 !important;
+                        text-decoration: none !important;
+                        cursor: pointer !important;
+                        white-space: nowrap !important;
+                    }
+
+                    .br-panel-main:hover,
+                    .br-panel-wrap.open .br-panel-main {
+                        background: rgba(255,255,255,0.08) !important;
+                        color: #fff !important;
+                    }
+
+                    .br-panel-dropdown {
+                        position: absolute !important;
+                        top: 100% !important;
+                        left: 0 !important;
+                        width: 260px !important;
+                        display: none !important;
+                        flex-direction: column !important;
+                        gap: 6px !important;
+                        padding: 10px !important;
+                        background: #1f2225 !important;
+                        border: 1px solid rgba(255,255,255,0.12) !important;
+                        border-radius: 0 0 8px 8px !important;
+                        box-shadow: 0 12px 35px rgba(0,0,0,0.65) !important;
+                        z-index: 2147483647 !important;
+                    }
+
+                    .br-panel-wrap.open .br-panel-dropdown,
+                    .br-panel-wrap:hover .br-panel-dropdown {
+                        display: flex !important;
+                    }
+
+                    .br-panel-row {
+                        display: grid !important;
+                        grid-template-columns: repeat(3, 1fr) !important;
+                        gap: 5px !important;
+                    }
+
+                    .br-panel-bottom {
+                        display: grid !important;
+                        grid-template-columns: 1fr 1.5fr !important;
+                        gap: 5px !important;
+                        padding-top: 6px !important;
+                        border-top: 1px solid rgba(255,255,255,0.12) !important;
+                    }
+
+                    .br-panel-drop-link,
+                    .br-panel-settings {
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        min-height: 30px !important;
+                        padding: 0 7px !important;
                         background: rgba(255,255,255,0.06) !important;
                         color: #ddd !important;
+                        border-top: 0 !important;
+                        border-right: 0 !important;
+                        border-bottom: 0 !important;
+                        border-radius: 4px !important;
                         font-family: inherit !important;
                         font-size: 12px !important;
                         font-weight: 700 !important;
                         text-decoration: none !important;
-                        white-space: nowrap !important;
                         cursor: pointer !important;
-                        border-top: 0 !important;
-                        border-left: 0 !important;
-                        border-right: 0 !important;
+                        white-space: nowrap !important;
                     }
 
-                    .br-topnav-btn:hover {
+                    .br-panel-drop-link:hover,
+                    .br-panel-settings:hover {
                         background: rgba(255,255,255,0.16) !important;
                         color: #fff !important;
                         text-decoration: none !important;
                     }
 
-                    .br-topnav-settings {
-                        border: 0 !important;
-                        background: rgba(245,158,11,0.18) !important;
-                        color: #fbbf24 !important;
+                    .br-panel-settings {
+                        border-left: 3px solid #f59e0b !important;
                     }
 
-                    .br-topnav-modal-overlay {
+                    .br-panel-modal-overlay {
                         position: fixed !important;
                         inset: 0 !important;
                         display: none !important;
@@ -282,11 +379,11 @@
                         z-index: 2147483647 !important;
                     }
 
-                    .br-topnav-modal-overlay.show {
+                    .br-panel-modal-overlay.show {
                         display: flex !important;
                     }
 
-                    .br-topnav-modal {
+                    .br-panel-modal {
                         width: 340px !important;
                         background: #181818 !important;
                         border: 1px solid #333 !important;
@@ -297,20 +394,20 @@
                         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
                     }
 
-                    .br-topnav-modal-title {
+                    .br-panel-modal-title {
                         font-size: 16px !important;
                         font-weight: 700 !important;
                         margin-bottom: 12px !important;
                     }
 
-                    .br-topnav-modal-body {
+                    .br-panel-modal-body {
                         display: grid !important;
                         grid-template-columns: repeat(2, 1fr) !important;
                         gap: 8px !important;
                         margin-bottom: 15px !important;
                     }
 
-                    .br-topnav-check {
+                    .br-panel-check {
                         display: flex !important;
                         align-items: center !important;
                         gap: 7px !important;
@@ -322,17 +419,17 @@
                         user-select: none !important;
                     }
 
-                    .br-topnav-check input {
+                    .br-panel-check input {
                         accent-color: #2563eb !important;
                     }
 
-                    .br-topnav-modal-footer {
+                    .br-panel-modal-footer {
                         display: flex !important;
                         justify-content: flex-end !important;
                         gap: 8px !important;
                     }
 
-                    .br-topnav-modal-footer button {
+                    .br-panel-modal-footer button {
                         padding: 7px 12px !important;
                         border: none !important;
                         border-radius: 6px !important;
@@ -340,12 +437,12 @@
                         font-weight: 700 !important;
                     }
 
-                    .br-topnav-cancel {
+                    .br-panel-cancel {
                         background: #333 !important;
                         color: #ddd !important;
                     }
 
-                    .br-topnav-save {
+                    .br-panel-save {
                         background: #2563eb !important;
                         color: #fff !important;
                     }
@@ -353,27 +450,27 @@
                 document.head.appendChild(style);
             }
 
-            function startTopNav() {
+            function startPanel() {
                 addStyle();
 
                 let tries = 0;
                 const timer = setInterval(() => {
                     tries += 1;
 
-                    if (renderTopButtons() || tries >= 80) {
+                    if (renderPanel() || tries >= 80) {
                         clearInterval(timer);
                     }
                 }, 250);
             }
 
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', startTopNav);
+                document.addEventListener('DOMContentLoaded', startPanel);
             } else {
-                startTopNav();
+                startPanel();
             }
         })();
     } catch (e) {
-        console.error('[BR Script] Top Nav Error:', e);
+        console.error('[BR Script] Panel Error:', e);
     }
 
 	if (document.body.dataset.forumButtonsLoaded) return;
