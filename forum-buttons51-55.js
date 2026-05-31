@@ -44,6 +44,14 @@
 
             const OPS_LINK = 'https://forum.blackrussia.online/threads/%D0%9E%D0%B1%D1%89%D0%B8%D0%B5-%D0%BF%D1%80%D0%B0%D0%B2%D0%B8%D0%BB%D0%B0-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%BE%D0%B2.312571/';
 
+            const HIDE_NAV_TEXTS = [
+                'Жалобы на адм.',
+                'Жалобы на адм',
+                'Обжалования',
+                'Жалобы на игроков',
+                'Жалобы на лидеров'
+            ];
+
             function getSelectedServers() {
                 try {
                     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -66,6 +74,19 @@
                 if (!el) return false;
                 const r = el.getBoundingClientRect();
                 return r.width > 0 && r.height > 0;
+            }
+
+            function hideInterferingNavButtons() {
+                const links = Array.from(document.querySelectorAll('a'));
+
+                links.forEach(link => {
+                    const text = textOf(link);
+                    if (!HIDE_NAV_TEXTS.includes(text)) return;
+
+                    const item = link.closest('li') || link;
+                    item.classList.add('br-hidden-by-panel');
+                    item.style.display = 'none';
+                });
             }
 
             function findModerLink() {
@@ -218,6 +239,8 @@
             }
 
             function renderPanel() {
+                hideInterferingNavButtons();
+
                 const moderLink = findModerLink();
                 if (!moderLink) return false;
 
@@ -270,6 +293,10 @@
                 const style = document.createElement('style');
                 style.id = 'br-panel-style-final';
                 style.textContent = `
+                    .br-hidden-by-panel {
+                        display: none !important;
+                    }
+
                     .br-panel-item,
                     .br-selected-server-item {
                         display: inline-flex !important;
@@ -442,6 +469,7 @@
 
             function startPanel() {
                 addStyle();
+                hideInterferingNavButtons();
 
                 let tries = 0;
                 const timer = setInterval(() => {
