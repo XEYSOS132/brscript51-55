@@ -2,7 +2,7 @@
     'use strict';
     try {
         (function () {
-            const STORAGE_KEY = 'br_topnav_panel_choice_v2';
+            const STORAGE_KEY = 'br_panel_servers_final_v3';
 
             const SERVERS = [
                 {
@@ -46,7 +46,7 @@
 
             function getSelectedServers() {
                 try {
-                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+                    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
                     if (Array.isArray(saved)) {
                         return saved.map(Number).filter(id => SERVERS.some(s => s.id === id));
                     }
@@ -74,30 +74,19 @@
             }
 
             function findInsertPlace(moderLink) {
-                if (!moderLink) return null;
-
-                const li = moderLink.closest('li');
+                const li = moderLink && moderLink.closest('li');
                 if (li && li.parentElement) {
-                    return {
-                        type: 'list',
-                        menu: li.parentElement,
-                        after: li
-                    };
+                    return { type: 'list', menu: li.parentElement, after: li };
                 }
 
-                const parent = moderLink.parentElement;
-                if (parent) {
-                    return {
-                        type: 'plain',
-                        menu: parent,
-                        after: moderLink
-                    };
+                if (moderLink && moderLink.parentElement) {
+                    return { type: 'plain', menu: moderLink.parentElement, after: moderLink };
                 }
 
                 return null;
             }
 
-            function makeTopLink(text, href, color) {
+            function makeServerLink(text, href, color) {
                 const a = document.createElement('a');
                 a.className = 'br-selected-server-btn';
                 a.textContent = text;
@@ -115,71 +104,58 @@
                     const s = SERVERS.find(server => server.id === id);
                     if (!s) return;
 
-                    buttons.push(makeTopLink('ТЖБ' + id, s.techComplaint, '#0000CD'));
-                    buttons.push(makeTopLink('Т' + id, s.tech, '#8B008B'));
-                    buttons.push(makeTopLink('ЖБ' + id, s.playerComplaint, '#DC143C'));
+                    buttons.push(makeServerLink('ТЖБ' + id, s.techComplaint, '#0000CD'));
+                    buttons.push(makeServerLink('Т' + id, s.tech, '#8B008B'));
+                    buttons.push(makeServerLink('ЖБ' + id, s.playerComplaint, '#DC143C'));
                 });
-
-                if (selected.length > 0) {
-                    buttons.push(makeTopLink('ОПС', OPS_LINK, '#f59e0b'));
-                }
 
                 return buttons;
             }
 
             function removeOldPanel() {
-                document.querySelectorAll('.br-panel-item, .br-panel-wrap, .br-selected-server-item, .br-selected-server-wrap, .br-topnav-item, .br-topnav-wrap').forEach(el => el.remove());
+                document.querySelectorAll(
+                    '.br-panel-item, .br-panel-wrap, .br-panel-menu, .br-selected-server-item, .br-selected-server-wrap, .br-topnav-item, .br-topnav-wrap'
+                ).forEach(el => el.remove());
             }
 
-            function makePanelElement() {
-                const holder = document.createElement('div');
-                holder.className = 'br-panel-wrap';
-
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'br-panel-main';
-                button.textContent = 'Панель управления';
-
-                const drop = document.createElement('div');
-                drop.className = 'br-panel-dropdown';
-
-                buildServerChooser(drop);
-
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    holder.classList.toggle('open');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!holder.contains(e.target)) {
-                        holder.classList.remove('open');
-                    }
-                });
-
-                holder.appendChild(button);
-                holder.appendChild(drop);
-
-                return holder;
+            function closeMenu() {
+                const menu = document.querySelector('.br-panel-menu');
+                if (menu) menu.classList.remove('open');
             }
 
-            function buildServerChooser(drop) {
-                drop.innerHTML = '';
+            function openMenuNear(button) {
+                let menu = document.querySelector('.br-panel-menu');
+
+                if (!menu) {
+                    menu = document.createElement('div');
+                    menu.className = 'br-panel-menu';
+                    document.body.appendChild(menu);
+                }
+
+                buildMenu(menu);
+
+                const rect = button.getBoundingClientRect();
+                menu.style.left = rect.left + 'px';
+                menu.style.top = rect.bottom + 'px';
+                menu.classList.toggle('open');
+            }
+
+            function buildMenu(menu) {
+                const selected = getSelectedServers();
+                menu.innerHTML = '';
 
                 const title = document.createElement('div');
-                title.className = 'br-panel-title';
-                title.textContent = 'Выбери сервер';
-                drop.appendChild(title);
-
-                const selected = getSelectedServers();
+                title.className = 'br-menu-title';
+                title.textContent = 'Выбор серверов';
+                menu.appendChild(title);
 
                 SERVERS.forEach(s => {
-                    const row = document.createElement('button');
-                    row.type = 'button';
-                    row.className = 'br-panel-server-choice' + (selected.includes(s.id) ? ' selected' : '');
-                    row.textContent = `${s.name} (${s.id})`;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'br-menu-server' + (selected.includes(s.id) ? ' selected' : '');
+                    btn.textContent = `${s.name} (${s.id})`;
 
-                    row.addEventListener('click', (e) => {
+                    btn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
 
@@ -191,13 +167,54 @@
                             current.push(s.id);
                         }
 
-                        current = current.sort((a, b) => a - b);
+                        current.sort((a, b) => a - b);
                         saveSelectedServers(current);
+
                         renderPanel();
+                        const newPanelButton = document.querySelector('.br-panel-main');
+                        const newMenu = document.querySelector('.br-panel-menu');
+
+                        if (newPanelButton && newMenu) {
+                            buildMenu(newMenu);
+                            const r = newPanelButton.getBoundingClientRect();
+                            newMenu.style.left = r.left + 'px';
+                            newMenu.style.top = r.bottom + 'px';
+                            newMenu.classList.add('open');
+                        }
                     });
 
-                    drop.appendChild(row);
+                    menu.appendChild(btn);
                 });
+
+                const divider = document.createElement('div');
+                divider.className = 'br-menu-divider';
+                menu.appendChild(divider);
+
+                const ops = document.createElement('a');
+                ops.className = 'br-menu-ops';
+                ops.textContent = 'Общие правила серверов';
+                ops.href = OPS_LINK;
+                ops.target = '_blank';
+                menu.appendChild(ops);
+            }
+
+            function makePanelButton() {
+                const wrap = document.createElement('div');
+                wrap.className = 'br-panel-wrap';
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'br-panel-main';
+                button.textContent = 'Панель управления';
+
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openMenuNear(button);
+                });
+
+                wrap.appendChild(button);
+                return wrap;
             }
 
             function renderPanel() {
@@ -207,9 +224,11 @@
                 const place = findInsertPlace(moderLink);
                 if (!place) return false;
 
+                const oldMenuOpen = document.querySelector('.br-panel-menu.open');
+
                 removeOldPanel();
 
-                const panel = makePanelElement();
+                const panel = makePanelButton();
                 const selectedButtons = buildSelectedButtons();
 
                 if (place.type === 'list') {
@@ -217,11 +236,7 @@
                     panelLi.className = 'p-navEl br-panel-item';
                     panelLi.appendChild(panel);
 
-                    if (place.after && place.after.parentNode === place.menu) {
-                        place.after.after(panelLi);
-                    } else {
-                        place.menu.appendChild(panelLi);
-                    }
+                    place.after.after(panelLi);
 
                     let last = panelLi;
 
@@ -229,13 +244,7 @@
                         const li = document.createElement('li');
                         li.className = 'p-navEl br-selected-server-item';
                         li.appendChild(btn);
-
-                        if (last && last.parentNode === place.menu) {
-                            last.after(li);
-                        } else {
-                            place.menu.appendChild(li);
-                        }
-
+                        last.after(li);
                         last = li;
                     });
                 } else {
@@ -247,28 +256,31 @@
                     panel.after(selectedWrap);
                 }
 
+                if (oldMenuOpen) {
+                    const btn = document.querySelector('.br-panel-main');
+                    if (btn) openMenuNear(btn);
+                }
+
                 return true;
             }
 
             function addStyle() {
-                if (document.querySelector('#br-panel-style')) return;
+                if (document.querySelector('#br-panel-style-final')) return;
 
                 const style = document.createElement('style');
-                style.id = 'br-panel-style';
+                style.id = 'br-panel-style-final';
                 style.textContent = `
                     .br-panel-item,
                     .br-selected-server-item {
                         display: inline-flex !important;
                         align-items: center !important;
                         list-style: none !important;
-                        position: relative !important;
                     }
 
                     .br-panel-wrap {
-                        position: relative !important;
                         display: inline-flex !important;
                         align-items: center !important;
-                        margin-left: 4px !important;
+                        position: relative !important;
                     }
 
                     .br-panel-main {
@@ -276,59 +288,54 @@
                         align-items: center !important;
                         justify-content: center !important;
                         min-height: 36px !important;
-                        padding: 0 14px !important;
+                        padding: 0 13px !important;
                         background: transparent !important;
                         color: #d7d7d7 !important;
                         border: 0 !important;
+                        border-bottom: 2px solid #f59e0b !important;
                         font-family: inherit !important;
                         font-size: 13px !important;
                         font-weight: 600 !important;
-                        text-decoration: none !important;
                         cursor: pointer !important;
                         white-space: nowrap !important;
                     }
 
-                    .br-panel-main:hover,
-                    .br-panel-wrap.open .br-panel-main {
+                    .br-panel-main:hover {
                         background: rgba(255,255,255,0.08) !important;
                         color: #fff !important;
                     }
 
-                    .br-panel-dropdown {
-                        position: absolute !important;
-                        top: 100% !important;
-                        left: 0 !important;
-                        width: 190px !important;
+                    .br-panel-menu {
+                        position: fixed !important;
                         display: none !important;
-                        flex-direction: column !important;
-                        gap: 5px !important;
-                        padding: 8px !important;
-                        background: #1f2225 !important;
-                        border: 1px solid rgba(255,255,255,0.12) !important;
+                        width: 230px !important;
+                        padding: 9px !important;
+                        background: #202327 !important;
+                        border: 1px solid rgba(255,255,255,0.14) !important;
                         border-radius: 0 0 8px 8px !important;
-                        box-shadow: 0 12px 35px rgba(0,0,0,0.65) !important;
+                        box-shadow: 0 12px 35px rgba(0,0,0,0.7) !important;
                         z-index: 2147483647 !important;
                     }
 
-                    .br-panel-wrap.open .br-panel-dropdown {
-                        display: flex !important;
+                    .br-panel-menu.open {
+                        display: block !important;
                     }
 
-                    .br-panel-title {
-                        padding: 4px 6px 7px 6px !important;
+                    .br-menu-title {
                         color: #aaa !important;
                         font-size: 12px !important;
                         font-weight: 700 !important;
+                        padding: 4px 6px 8px !important;
+                        margin-bottom: 5px !important;
                         border-bottom: 1px solid rgba(255,255,255,0.12) !important;
-                        margin-bottom: 4px !important;
                     }
 
-                    .br-panel-server-choice {
+                    .br-menu-server {
                         display: flex !important;
                         align-items: center !important;
-                        justify-content: flex-start !important;
-                        min-height: 29px !important;
                         width: 100% !important;
+                        min-height: 30px !important;
+                        margin: 3px 0 !important;
                         padding: 0 8px !important;
                         background: rgba(255,255,255,0.06) !important;
                         color: #ddd !important;
@@ -337,24 +344,52 @@
                         font-family: inherit !important;
                         font-size: 12px !important;
                         font-weight: 700 !important;
-                        cursor: pointer !important;
                         text-align: left !important;
+                        cursor: pointer !important;
                     }
 
-                    .br-panel-server-choice:hover {
+                    .br-menu-server:hover {
                         background: rgba(255,255,255,0.16) !important;
                         color: #fff !important;
                     }
 
-                    .br-panel-server-choice.selected {
-                        background: rgba(37,99,235,0.22) !important;
+                    .br-menu-server.selected {
+                        background: rgba(37, 99, 235, 0.28) !important;
                         color: #fff !important;
                     }
 
-                    .br-panel-server-choice.selected::before {
+                    .br-menu-server.selected::before {
                         content: '✓' !important;
                         color: #60a5fa !important;
-                        margin-right: 6px !important;
+                        margin-right: 7px !important;
+                    }
+
+                    .br-menu-divider {
+                        height: 1px !important;
+                        background: rgba(255,255,255,0.12) !important;
+                        margin: 8px 0 !important;
+                    }
+
+                    .br-menu-ops {
+                        display: flex !important;
+                        align-items: center !important;
+                        width: 100% !important;
+                        min-height: 31px !important;
+                        padding: 0 8px !important;
+                        box-sizing: border-box !important;
+                        background: rgba(245,158,11,0.16) !important;
+                        color: #fbbf24 !important;
+                        border-left: 3px solid #f59e0b !important;
+                        border-radius: 4px !important;
+                        font-size: 12px !important;
+                        font-weight: 700 !important;
+                        text-decoration: none !important;
+                    }
+
+                    .br-menu-ops:hover {
+                        background: rgba(245,158,11,0.28) !important;
+                        color: #fff !important;
+                        text-decoration: none !important;
                     }
 
                     .br-selected-server-wrap {
@@ -362,7 +397,6 @@
                         align-items: center !important;
                         gap: 4px !important;
                         margin-left: 4px !important;
-                        flex-wrap: wrap !important;
                     }
 
                     .br-selected-server-btn {
@@ -393,6 +427,17 @@
                     }
                 `;
                 document.head.appendChild(style);
+
+                document.addEventListener('click', function (e) {
+                    const menu = document.querySelector('.br-panel-menu');
+                    const button = document.querySelector('.br-panel-main');
+
+                    if (!menu || !button) return;
+
+                    if (!menu.contains(e.target) && !button.contains(e.target)) {
+                        closeMenu();
+                    }
+                });
             }
 
             function startPanel() {
