@@ -2,7 +2,7 @@
     'use strict';
     try {
         (function () {
-            const STORAGE_KEY = 'br_topnav_51_55_selected';
+            const STORAGE_KEY = 'br_topnav_panel_choice_v2';
 
             const SERVERS = [
                 {
