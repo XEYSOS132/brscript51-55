@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         My Tech Script Loader
 // @namespace    https://github.com/s4loed-blip/brscript51-55
-// @version      0.1.1
-// @description  Для работы отдела 51-55
+// @version      0.1.2
+// @description  Для работы отдела 41-45 / 51-55
 // @author       tech51
 // @match        https://forum.blackrussia.online/*
 // @grant        GM_getValue
@@ -18,7 +18,7 @@
     'use strict';
 
     const CONFIG = {
-        sourceUrl: 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/forum-buttons51-55.js',
+        sourceUrl: 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/forum-buttons.js',
         timeoutMs: 10000,
         retries: 3,
         retryDelayMs: 2000,
