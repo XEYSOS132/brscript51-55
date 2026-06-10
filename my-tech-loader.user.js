@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         My Tech Script Loader
 // @namespace    https://github.com/s4loed-blip/brscript51-55
-// @version      0.2.0
+// @version      0.2.1
 // @description  Для работы отдела 41-45 / 51-55
 // @author       tech51
 // @match        https://forum.blackrussia.online/*
@@ -25,7 +25,7 @@
         cacheKey: 'my_tech_script_cache_v2',
         oldCacheKey: 'my_tech_script_cache',
         debug: false,
-        build: 'loader-0.2.0-cache-first-20260610-2035'
+        build: 'loader-0.2.1-click-guard-v11-20260610-2310'
     };
 
     const pageWindow = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;

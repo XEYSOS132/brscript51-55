@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    const BR_SCRIPT_VERSION = '2026-06-10-fix-10';
-    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-10-panel-loader-v10-20260610-2025';
+    const BR_SCRIPT_VERSION = '2026-06-10-fix-11';
+    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-10-click-guard-v11-20260610-2310';
     const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_version';
     const BR_SCRIPT_DOWNLOAD_URL = 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/my-tech-loader.user.js';
 
@@ -840,8 +840,8 @@
         console.error('[BR Script] Panel Error:', e);
     }
 
-	if (document.body.dataset.forumButtonsLoaded) return;
-    document.body.dataset.forumButtonsLoaded = 'true';
+	if (document.body.dataset.forumButtonsLoaded === BR_SCRIPT_VERSION) return;
+    document.body.dataset.forumButtonsLoaded = BR_SCRIPT_VERSION;
 	const UNACCEPT_PREFIX = 4; // префикс отказано
   const ODOBRENO_PREFIX = 8; // префикс одобрено
 	const PIN_PREFIX = 2; //  префикс закрепить
@@ -1568,6 +1568,19 @@
     }
 
 
+    function resetOwnUiBeforeRender() {
+        try {
+            $('#selectAnswers, #pin, #teamProject, #watched, #unaccept, #decided, #closed, #techspec, #odobreno').remove();
+            $('.br-status-line, .br-status-buttons').remove();
+            $(document).off('.brForumButtons');
+            $(document).off('.brForumAnswer');
+            $(document).off('.brForumTasks');
+        } catch (e) {}
+    }
+
+    resetOwnUiBeforeRender();
+
+
 	// Добавление кнопок при загрузке страницы
 	addButton('На рассмотрение', 'pin', 'border-radius: 20px; margin-right: 11px; border: 2px solid; border-color: rgb(255, 165, 0);');
 	addButton('КП', 'teamProject', 'border-radius: 20px; margin-right: 100px; border: 2px solid; border-color: rgb(255, 255, 0);');
@@ -1582,34 +1595,81 @@
 	// Поиск информации о теме
 	const threadData = getThreadData();
 
-	$(`button#ff`).click(() => pasteContent(8, threadData, true));
-	$(`button#prr`).click(() => pasteContent(2, threadData, true));
-	$(`button#zhb`).click(() => pasteContent(21, threadData, false));
-	$('button#unaccept').click(() => editThreadData(UNACCEPT_PREFIX, false));
-	$('button#pin').click(() => editThreadData(PIN_PREFIX, true));
-	$('button#teamProject').click(() => editThreadData(COMMAND_PREFIX, true));
-	$('button#watched').click(() => editThreadData(WATCHED_PREFIX, false));
-	$('button#decided').click(() => editThreadData(DECIDED_PREFIX, false));
-	$('button#closed').click(() => editThreadData(CLOSE_PREFIX, false));
-	$('button#odobreno').click(() => editThreadData(ODOBRENO_PREFIX, false));
-	$('button#techspec').click(() => editThreadData(TECHADM_PREFIX, true));
-
-	$(`button#selectAnswers`).click(() => {
-            XF.alert(buttonsMarkup(buttons), null, 'Выберите ответ:');
-            buttons.forEach((btn, id) => {
-                if (id > 6) {
-                    $(`button#answers-${id}`).click(() => pasteContent(id, threadData, true));
-                } else {
-                    $(`button#answers-${id}`).click(() => pasteContent(id, threadData, false));
-                }
-            });
+    $(document)
+        .off('click.brForumButtons', 'button#ff')
+        .on('click.brForumButtons', 'button#ff', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            pasteContent(8, threadData, true);
         });
 
-        $(`button#selectMoveTasks`).click(() => {
+    $(document)
+        .off('click.brForumButtons', 'button#prr')
+        .on('click.brForumButtons', 'button#prr', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            pasteContent(2, threadData, true);
+        });
+
+    $(document)
+        .off('click.brForumButtons', 'button#zhb')
+        .on('click.brForumButtons', 'button#zhb', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            pasteContent(21, threadData, false);
+        });
+
+    $(document).off('click.brForumButtons', 'button#unaccept').on('click.brForumButtons', 'button#unaccept', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(UNACCEPT_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#pin').on('click.brForumButtons', 'button#pin', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(PIN_PREFIX, true); });
+    $(document).off('click.brForumButtons', 'button#teamProject').on('click.brForumButtons', 'button#teamProject', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(COMMAND_PREFIX, true); });
+    $(document).off('click.brForumButtons', 'button#watched').on('click.brForumButtons', 'button#watched', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(WATCHED_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#decided').on('click.brForumButtons', 'button#decided', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(DECIDED_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#closed').on('click.brForumButtons', 'button#closed', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(CLOSE_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#odobreno').on('click.brForumButtons', 'button#odobreno', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(ODOBRENO_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#techspec').on('click.brForumButtons', 'button#techspec', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(TECHADM_PREFIX, true); });
+
+    $(document)
+        .off('click.brForumButtons', 'button#selectAnswers')
+        .on('click.brForumButtons', 'button#selectAnswers', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            XF.alert(buttonsMarkup(buttons), null, 'Выберите ответ:');
+
+            $(document)
+                .off('click.brForumAnswer', '.br-answer-choice')
+                .on('click.brForumAnswer', '.br-answer-choice', function (ev) {
+                    ev.preventDefault();
+                    ev.stopImmediatePropagation();
+
+                    const id = Number($(this).attr('data-answer-id'));
+                    if (!Number.isInteger(id) || !buttons[id] || !buttons[id].content) return;
+
+                    pasteContent(id, threadData, id > 6);
+                    $(document).off('click.brForumAnswer', '.br-answer-choice');
+                });
+        });
+
+    $(document)
+        .off('click.brForumButtons', 'button#selectMoveTasks')
+        .on('click.brForumButtons', 'button#selectMoveTasks', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
             XF.alert(tasksMarkup1(tasks), null, 'Выберите действие:');
-            tasks.forEach((btn, id) => {
-                $(`button#answers-${id}`).click(() => moveThread(tasks[id].prefix, tasks[id].move));
-            });
+
+            $(document)
+                .off('click.brForumTasks', '.br-task-choice')
+                .on('click.brForumTasks', '.br-task-choice', function (ev) {
+                    ev.preventDefault();
+                    ev.stopImmediatePropagation();
+
+                    const id = Number($(this).attr('data-task-id'));
+                    if (!Number.isInteger(id) || !tasks[id]) return;
+
+                    moveThread(tasks[id].prefix, tasks[id].move);
+                    $(document).off('click.brForumTasks', '.br-task-choice');
+                });
         });
     });
 
@@ -1784,21 +1844,24 @@
     }
 
     function buttonsMarkup(buttons) {
-    return `<div class="select_answer">${buttons
-        .map(
-        (btn, i) =>
-        `<button id="answers-${i}" class="button--primary button rippleButton" style="margin:4px; border-radius: 13px; ${btn.dpstyle}"><span class="button-text">${btn.title}</span></button>`,
-    )
-        .join('')}</div>`;
-}
+        return `<div class="select_answer br-answer-list">${buttons
+            .map((btn, i) => {
+                const title = btn && btn.title ? btn.title : `Ответ ${i}`;
+                const style = btn && btn.dpstyle ? btn.dpstyle : '';
+                if (!btn || !btn.content) {
+                    return `<div class="br-answer-header" style="margin:6px 4px; padding:7px 10px; border-radius: 10px; font-weight: 800; text-align:center; ${style}">${title}</div>`;
+                }
+
+                return `<button type="button" data-answer-id="${i}" class="button--primary button rippleButton br-answer-choice" style="margin:4px; border-radius: 13px; ${style}"><span class="button-text">${title}</span></button>`;
+            })
+            .join('')}</div>`;
+    }
 
     function tasksMarkup(buttons) {
-        return `<div class="select_answer">${buttons
-            .map(
-            (btn, i) =>
-            `<button id="answers-${i}" class="button--primary button ` +
-            `rippleButton" style="margin:5px; border-radius: 13px; margin-right: 5px; border: 1px solid; border-color: #E6E6FA; background-color: ${btn.color || "#000000"}"><span class="button-text">${btn.title}</span></button>`,
-        )
+        return `<div class="select_answer br-task-list">${buttons
+            .map((btn, i) =>
+                `<button type="button" data-task-id="${i}" class="button--primary button rippleButton br-task-choice" style="margin:5px; border-radius: 13px; margin-right: 5px; border: 1px solid; border-color: #E6E6FA; background-color: ${btn.color || "#000000"}"><span class="button-text">${btn.title}</span></button>`,
+            )
             .join('')}</div>`;
     }
 
