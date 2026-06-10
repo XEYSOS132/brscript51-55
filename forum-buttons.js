@@ -1291,6 +1291,34 @@
 	// Загрузка скрипта для обработки шаблонов
 	$('body').append('<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>');
 
+    // Фикс расположения кнопок: одна строка + не вставлять в блок "Недавно"
+    if (!document.querySelector('#br-status-buttons-fix')) {
+        $('head').append(`
+<style id="br-status-buttons-fix">
+.br-status-buttons {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+}
+
+.br-status-buttons button {
+    flex: 0 0 auto !important;
+    margin-right: 0 !important;
+}
+
+.uix_recentActions .br-status-buttons,
+.uix_recent .br-status-buttons,
+.block-outer .br-status-buttons {
+    display: none !important;
+}
+</style>
+        `);
+    }
+
+
 	// Добавление кнопок при загрузке страницы
 	addButton('На рассмотрение', 'pin', 'border-radius: 20px; margin-right: 11px; border: 2px solid; border-color: rgb(255, 165, 0);');
 	addButton('КП', 'teamProject', 'border-radius: 20px; margin-right: 100px; border: 2px solid; border-color: rgb(255, 255, 0);');
@@ -1337,14 +1365,46 @@
     });
 
 
+    function getMainReplyButton() {
+        return $('.button--icon--reply')
+            .filter(function () {
+                return !$(this).closest('.uix_recentActions, .uix_recent, .block-outer, .br-status-buttons').length;
+            })
+            .first();
+    }
+
+    function ensureStatusWrap() {
+        const replyBtn = getMainReplyButton();
+        if (!replyBtn.length) return $();
+
+        let wrap = $('.br-status-buttons').first();
+        if (!wrap.length) {
+            wrap = $('<span class="br-status-buttons"></span>');
+            replyBtn.before(wrap);
+        }
+
+        return wrap;
+    }
+
     function addButton(name, id, hex = "grey") {
-		$('.button--icon--reply').before(
-		`<button type="button" class="button--primary button rippleButton" id="${id}" style="border-radius: 25px; margin-right: 5px; background-color: ${hex}">${name}</button>`,
-		);
-		}
+        if ($(`#${id}`).length) return;
+
+        const wrap = ensureStatusWrap();
+        if (!wrap.length) return;
+
+        wrap.append(
+            `<button type="button" class="button--primary button rippleButton" id="${id}" style="border-radius: 25px; margin-right: 5px; background-color: ${hex}">${name}</button>`
+        );
+    }
 
     function addAnswers() {
-        $('.button--icon--reply').after(`<button type="button" class="button--cta uix_quickReply--button button button--icon button--icon--write rippleButton" id="selectAnswers" style="oswald: 3px; margin-left: 5px; margin-top: 1px; border-radius: 13px; background-color: #FF4500; border-color: #E6E6FA">Ответы</button>`,
+        if ($('#selectAnswers').length) return;
+
+        const replyBtn = getMainReplyButton();
+        if (!replyBtn.length) return;
+
+        replyBtn.after(
+            `<button type="button" class="button--cta uix_quickReply--button button button--icon button--icon--write rippleButton" id="selectAnswers" style="oswald: 3px; margin-left: 5px; margin-top: 1px; border-radius: 13px; background-color: #FF4500; border-color: #E6E6FA">Ответы</button>`
         );
     }
 
