@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    const BR_SCRIPT_VERSION = '2026-06-10-fix-9';
-    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-10-layout-panel-notice-v9';
+    const BR_SCRIPT_VERSION = '2026-06-10-fix-10';
+    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-10-panel-loader-v10-20260610-2025';
     const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_version';
     const BR_SCRIPT_DOWNLOAD_URL = 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/my-tech-loader.user.js';
 
@@ -143,7 +143,7 @@
                             <div class="br-update-icon">⚡</div>
                             <div>
                                 <div class="br-update-title">BR Script обновлён</div>
-                                <div class="br-update-subtitle">Новая сборка готова к установке</div>
+                                <div class="br-update-subtitle">Новая сборка готова к установке — обновлён loader</div>
                             </div>
                         </div>
                         <div class="br-update-body">
@@ -151,15 +151,15 @@
                             <div class="br-update-list">
                                 <div><span>✓</span> Кнопки статусов выровнены нормальной строкой</div>
                                 <div><span>✓</span> Блок «Недавно» больше не мешает под формой ответа</div>
-                                <div><span>✓</span> Панель управления восстанавливается после обновления/перерисовки страницы</div>
-                                <div><span>✓</span> Окно обновления не появляется после скачивания до следующей версии</div>
+                                <div><span>✓</span> Панель управления теперь запускается быстрее через кэш loader</div>
+                                <div><span>✓</span> Loader обновлён: Tampermonkey больше не должен писать «код такой же»</div>
                             </div>
                         </div>
                         <div class="br-update-actions">
                             <button id="br-script-update-download" class="br-update-download" type="button">Скачать обновление</button>
                             <button id="br-script-update-later" class="br-update-later" type="button">Позже</button>
                         </div>
-                        <div class="br-update-footer">После скачивания это окно скроется до следующей обновы.</div>
+                        <div class="br-update-footer">Сначала обнови loader, потом forum-buttons.js. Окно скроется до следующей версии.</div>
                     </div>
                 `;
                 document.body.appendChild(overlay);
