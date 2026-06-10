@@ -1,11 +1,17 @@
 (function () {
     'use strict';
 
-    const BR_SCRIPT_VERSION = '2026-06-10-fix-4';
+    const BR_SCRIPT_VERSION = '2026-06-10-fix-5';
+    const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_version';
+    const BR_SCRIPT_DOWNLOAD_URL = 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/my-tech-loader.user.js';
 
     function showScriptUpdateNotice() {
         try {
+            if (localStorage.getItem(BR_SCRIPT_UPDATE_KEY) === BR_SCRIPT_VERSION) return;
+
             setTimeout(() => {
+                if (localStorage.getItem(BR_SCRIPT_UPDATE_KEY) === BR_SCRIPT_VERSION) return;
+
                 const old = document.querySelector('#br-script-update-notice');
                 if (old) old.remove();
 
@@ -14,19 +20,23 @@
                 box.innerHTML = `
                     <div style="font-size: 16px; font-weight: 800; margin-bottom: 8px; color: #fff;">Обновление BR Script</div>
                     <div style="font-size: 13px; line-height: 1.45; color: #e5e7eb;">
-                        Исправлены кнопки под ответом:<br>
-                        • одна нормальная строка;<br>
-                        • кнопки больше не падают в «Недавно»;<br>
-                        • блок «Недавно» принудительно скрывается.<br><br>
-                        Версия: <b>${BR_SCRIPT_VERSION}</b>
+                        Что изменено:<br>
+                        • Исправлено отображение кнопок в одну строку<br>
+                        • Исправлен баг с попаданием кнопок в блок «Недавно»<br>
+                        • Блок «Недавно» скрывается под формой ответа<br><br>
+                        Версия: <b>${BR_SCRIPT_VERSION}</b><br><br>
+                        Нажми <b>«Скачать обновление»</b>. После этого окно больше не появится до следующей версии.
                     </div>
-                    <button id="br-script-update-close" type="button" style="margin-top: 12px; padding: 7px 13px; border: 0; border-radius: 8px; background: #ff4500; color: #fff; font-weight: 800; cursor: pointer;">Понял</button>
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                        <button id="br-script-update-download" type="button" style="padding: 8px 12px; border: 0; border-radius: 8px; background: #ff4500; color: #fff; font-weight: 800; cursor: pointer;">Скачать обновление</button>
+                        <button id="br-script-update-later" type="button" style="padding: 8px 12px; border: 1px solid rgba(255,255,255,.18); border-radius: 8px; background: transparent; color: #ddd; font-weight: 700; cursor: pointer;">Позже</button>
+                    </div>
                 `;
                 box.style.cssText = [
                     'position: fixed',
                     'right: 18px',
                     'bottom: 18px',
-                    'width: 330px',
+                    'width: 360px',
                     'padding: 15px',
                     'background: #202327',
                     'border: 2px solid #ff4500',
@@ -37,8 +47,20 @@
                 ].join(';') + ';';
 
                 document.body.appendChild(box);
-                const close = document.querySelector('#br-script-update-close');
-                if (close) close.addEventListener('click', () => box.remove());
+
+                const download = document.querySelector('#br-script-update-download');
+                if (download) {
+                    download.addEventListener('click', () => {
+                        localStorage.setItem(BR_SCRIPT_UPDATE_KEY, BR_SCRIPT_VERSION);
+                        window.open(BR_SCRIPT_DOWNLOAD_URL + '?v=' + encodeURIComponent(BR_SCRIPT_VERSION), '_blank');
+                        box.remove();
+                    });
+                }
+
+                const later = document.querySelector('#br-script-update-later');
+                if (later) {
+                    later.addEventListener('click', () => box.remove());
+                }
             }, 1200);
         } catch (e) {
             console.error('[BR Script] Update notice error:', e);
