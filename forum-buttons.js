@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    const BR_SCRIPT_VERSION = '2026-06-10-fix-13';
-    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-10-muted-sections-v13-20260611-0015';
+    const BR_SCRIPT_VERSION = '2026-06-10-fix-14';
+    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-10-restore-old-colors-v14-20260611-0001';
     const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_version';
     const BR_SCRIPT_DOWNLOAD_URL = 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/my-tech-loader.user.js';
 
@@ -936,7 +936,7 @@
 
 {
   title: 'ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ  ᅠᅠ ᅠ ЖАЛОБЫ НА ТЕХ. СПЕЦОВ ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠ  ᅠ ',
-  dpstyle: 'color:#d7d7d7; background:#252a31; border:1px solid rgba(255,255,255,.14); box-shadow:none; letter-spacing:.2px; font-weight:800;',
+  dpstyle: 'oswald: 3px;     color: #fff; background: #db2309; box-shadow: 0 0 2px 0 rgba(0,0,0,0.14),0 2px 2px 0 rgba(0,0,0,0.12),0 1px 3px 0 rgba(0,0,0,0.2); border: none; border-color: #f53317',
     },
 
 {
@@ -1042,7 +1042,7 @@
 },
 	{
   title: ' ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠᅠ ᅠ Технический раздел ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠᅠ  ᅠ ᅠ ᅠ ᅠ ᅠ  ᅠ ᅠ ',
-  dpstyle: 'color:#d7d7d7; background:#252a31; border:1px solid rgba(255,255,255,.14); box-shadow:none; letter-spacing:.2px; font-weight:800;',
+  dpstyle: 'oswald: 3px;     color: #fff; background: #db2309; box-shadow: 0 0 2px 0 rgba(0,0,0,0.14),0 2px 2px 0 rgba(0,0,0,0.12),0 1px 3px 0 rgba(0,0,0,0.2); border: none; border-color: #f53317',
     },
 {
 	title: 'Форма подачи ТР',
@@ -1473,7 +1473,7 @@
 
 {
   title: 'ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠᅠ ᅠ ЖАЛОБЫ НА ИГРОКОВ ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ     ',
-  dpstyle: 'color:#d7d7d7; background:#252a31; border:1px solid rgba(255,255,255,.14); box-shadow:none; letter-spacing:.2px; font-weight:800;',
+  dpstyle: 'oswald: 3px;     color: #fff; background: #db2309; box-shadow: 0 0 2px 0 rgba(0,0,0,0.14),0 2px 2px 0 rgba(0,0,0,0.12),0 1px 3px 0 rgba(0,0,0,0.2); border: none; border-color: #f53317',
     },
 {
 	title: 'Игрок будет заблокирован',
@@ -1598,13 +1598,6 @@
     background: #222831 !important;
     border: 1px solid #E6E6FA !important;
 }
-.br-answer-list .br-answer-header {
-    display: block !important;
-    color: #d7d7d7 !important;
-    background: #252a31 !important;
-    border: 1px solid rgba(255,255,255,.14) !important;
-    box-shadow: none !important;
-}
 #brs51-status-panel .brs51-answer-main {
     margin-left: 6px !important;
     border-radius: 13px !important;
@@ -1644,8 +1637,82 @@
 	const threadData = getThreadData();
     bindBRS51DirectHandlers(threadData);
 
-    // Делегированные обработчики отключены: работаем через прямые .brs51direct,
-    // чтобы стороннее расширение и наши кнопки не отправляли два ответа за один клик.
+    $(document)
+        .off('click.brForumButtons', 'button#ff')
+        .on('click.brForumButtons', 'button#ff', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            pasteContent(8, threadData, true);
+        });
+
+    $(document)
+        .off('click.brForumButtons', 'button#prr')
+        .on('click.brForumButtons', 'button#prr', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            pasteContent(2, threadData, true);
+        });
+
+    $(document)
+        .off('click.brForumButtons', 'button#zhb')
+        .on('click.brForumButtons', 'button#zhb', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            pasteContent(21, threadData, false);
+        });
+
+    $(document).off('click.brForumButtons', 'button#brs51-unaccept').on('click.brForumButtons', 'button#brs51-unaccept', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(UNACCEPT_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-pin').on('click.brForumButtons', 'button#brs51-pin', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(PIN_PREFIX, true); });
+    $(document).off('click.brForumButtons', 'button#brs51-teamProject').on('click.brForumButtons', 'button#brs51-teamProject', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(COMMAND_PREFIX, true); });
+    $(document).off('click.brForumButtons', 'button#brs51-watched').on('click.brForumButtons', 'button#brs51-watched', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(WATCHED_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-decided').on('click.brForumButtons', 'button#brs51-decided', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(DECIDED_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-closed').on('click.brForumButtons', 'button#brs51-closed', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(CLOSE_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-odobreno').on('click.brForumButtons', 'button#brs51-odobreno', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(ODOBRENO_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-techspec').on('click.brForumButtons', 'button#brs51-techspec', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(TECHADM_PREFIX, true); });
+
+    $(document)
+        .off('click.brForumButtons', 'button#brs51-select-answers')
+        .on('click.brForumButtons', 'button#brs51-select-answers', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            XF.alert(buttonsMarkup(buttons), null, 'Выберите ответ:');
+
+            $(document)
+                .off('click.brForumAnswer', '.br-answer-choice')
+                .on('click.brForumAnswer', '.br-answer-choice', function (ev) {
+                    ev.preventDefault();
+                    ev.stopImmediatePropagation();
+
+                    const id = Number($(this).attr('data-answer-id'));
+                    if (!Number.isInteger(id) || !buttons[id] || !buttons[id].content) return;
+
+                    pasteContent(id, threadData, id > 6);
+                    $(document).off('click.brForumAnswer', '.br-answer-choice');
+                });
+        });
+
+    $(document)
+        .off('click.brForumButtons', 'button#selectMoveTasks')
+        .on('click.brForumButtons', 'button#selectMoveTasks', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            XF.alert(tasksMarkup1(tasks), null, 'Выберите действие:');
+
+            $(document)
+                .off('click.brForumTasks', '.br-task-choice')
+                .on('click.brForumTasks', '.br-task-choice', function (ev) {
+                    ev.preventDefault();
+                    ev.stopImmediatePropagation();
+
+                    const id = Number($(this).attr('data-task-id'));
+                    if (!Number.isInteger(id) || !tasks[id]) return;
+
+                    moveThread(tasks[id].prefix, tasks[id].move);
+                    $(document).off('click.brForumTasks', '.br-task-choice');
+                });
+        });
     });
 
 
