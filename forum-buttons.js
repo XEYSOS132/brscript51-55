@@ -1,9 +1,100 @@
 (function () {
     'use strict';
 
-    const BR_SCRIPT_VERSION = '2026-06-10-fix-6';
+    const BR_SCRIPT_VERSION = '2026-06-10-fix-7';
     const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_version';
     const BR_SCRIPT_DOWNLOAD_URL = 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/my-tech-loader.user.js';
+
+
+
+    function installEarlyRecentHider() {
+        try {
+            if (!document.documentElement) return;
+
+            if (!document.querySelector('#br-early-recent-hide-style')) {
+                const style = document.createElement('style');
+                style.id = 'br-early-recent-hide-style';
+                style.textContent = `
+                    .br-force-hide-recent,
+                    .uix_recentActions,
+                    .uix_recentActionsContainer,
+                    .uix_quickReply--recent,
+                    .uix_quickReply__recent,
+                    .js-quickReplyRecent,
+                    .quickReplyRecent,
+                    [data-xf-init*="quick-reply"] .uix_recent,
+                    [data-xf-init*="quick-reply"] .uix_recentActions {
+                        display: none !important;
+                        visibility: hidden !important;
+                        opacity: 0 !important;
+                        height: 0 !important;
+                        max-height: 0 !important;
+                        overflow: hidden !important;
+                        pointer-events: none !important;
+                    }
+                `;
+                (document.head || document.documentElement).appendChild(style);
+            }
+
+            const scan = () => {
+                try {
+                    const isBadText = (txt) => {
+                        txt = String(txt || '').replace(/\s+/g, ' ').trim().toLowerCase();
+                        return txt.includes('недавно') && (
+                            txt.includes('переношу') ||
+                            txt.includes('быстрые ответы') ||
+                            txt.includes('ответы') ||
+                            txt.includes('вашу тему')
+                        );
+                    };
+
+                    const nodes = Array.from(document.querySelectorAll('div, span'));
+                    for (const el of nodes) {
+                        if (!el || el.closest('#br-script-update-notice, .br-status-line, .br-status-buttons, .fr-box, .fr-toolbar, .fr-wrapper')) continue;
+
+                        const own = Array.from(el.childNodes)
+                            .filter(n => n.nodeType === Node.TEXT_NODE)
+                            .map(n => n.textContent)
+                            .join(' ');
+
+                        if (!String(own).toLowerCase().includes('недавно')) continue;
+
+                        let target = el;
+                        for (let i = 0; i < 6 && target && target !== document.body; i += 1) {
+                            const txt = target.innerText || target.textContent || '';
+                            const r = target.getBoundingClientRect ? target.getBoundingClientRect() : { height: 0 };
+                            if (isBadText(txt) && (!r.height || r.height <= 110)) break;
+                            target = target.parentElement;
+                        }
+
+                        if (target && target !== document.body) {
+                            target.classList.add('br-force-hide-recent');
+                            target.style.setProperty('display', 'none', 'important');
+                            target.style.setProperty('visibility', 'hidden', 'important');
+                            target.style.setProperty('height', '0', 'important');
+                            target.style.setProperty('max-height', '0', 'important');
+                            target.style.setProperty('overflow', 'hidden', 'important');
+                            target.style.setProperty('pointer-events', 'none', 'important');
+                        }
+                    }
+                } catch (e) {}
+            };
+
+            scan();
+            const earlyTimer = setInterval(scan, 50);
+            setTimeout(() => clearInterval(earlyTimer), 5000);
+
+            if (!window.__brRecentObserverInstalled) {
+                window.__brRecentObserverInstalled = true;
+                const observer = new MutationObserver(scan);
+                observer.observe(document.documentElement, { childList: true, subtree: true });
+            }
+        } catch (e) {
+            console.error('[BR Script] Early recent hider error:', e);
+        }
+    }
+
+    installEarlyRecentHider();
 
     function showScriptUpdateNotice() {
         try {
@@ -23,7 +114,7 @@
                         Что изменено:<br>
                         • Исправлено отображение кнопок в одну строку<br>
                         • Исправлен баг с попаданием кнопок в блок «Недавно»<br>
-                        • Блок «Недавно» скрывается под формой ответа<br><br>
+                        • Блок «Недавно» скрывается сразу при загрузке страницы<br><br>
                         Версия: <b>${BR_SCRIPT_VERSION}</b><br><br>
                         Нажми <b>«Скачать обновление»</b>. После этого окно больше не появится до следующей версии.
                     </div>
@@ -1357,6 +1448,7 @@
 	// Загрузка скрипта для обработки шаблонов
 	$('body').append('<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>');
 
+    installEarlyRecentHider();
     showScriptUpdateNotice();
     hideRecentAnswerRow();
     setTimeout(hideRecentAnswerRow, 800);
@@ -1394,6 +1486,12 @@
 }
 
 .br-force-hide-recent,
+.uix_recentActions,
+.uix_recentActionsContainer,
+.uix_quickReply--recent,
+.uix_quickReply__recent,
+.js-quickReplyRecent,
+.quickReplyRecent,
 .uix_recentActions .br-status-buttons,
 .uix_recent .br-status-buttons,
 .block-outer .br-status-buttons {
