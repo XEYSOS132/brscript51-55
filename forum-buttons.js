@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    const BR_SCRIPT_VERSION = '2026-06-10-fix-11';
-    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-10-click-guard-v11-20260610-2310';
+    const BR_SCRIPT_VERSION = '2026-06-10-fix-12';
+    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-10-isolated-ui-v12-20260610-2345';
     const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_version';
     const BR_SCRIPT_DOWNLOAD_URL = 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/my-tech-loader.user.js';
 
@@ -840,7 +840,8 @@
         console.error('[BR Script] Panel Error:', e);
     }
 
-	if (document.body.dataset.forumButtonsLoaded === BR_SCRIPT_VERSION) return;
+	if (window.__BRS51_FORUM_BUTTONS_ACTIVE__ === BR_SCRIPT_VERSION) return;
+    window.__BRS51_FORUM_BUTTONS_ACTIVE__ = BR_SCRIPT_VERSION;
     document.body.dataset.forumButtonsLoaded = BR_SCRIPT_VERSION;
 	const UNACCEPT_PREFIX = 4; // префикс отказано
   const ODOBRENO_PREFIX = 8; // префикс одобрено
@@ -1563,6 +1564,46 @@
 .block-outer .br-status-buttons {
     display: none !important;
 }
+
+#brs51-status-panel { isolation: isolate !important; }
+#brs51-status-panel .brs51-action-button,
+#brs51-status-panel .brs51-answer-main,
+.br-answer-list .brs51-answer-choice,
+.br-task-list .brs51-task-choice {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 30px !important;
+    padding: 0 12px !important;
+    color: #fff !important;
+    font-family: inherit !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    box-sizing: border-box !important;
+    line-height: 1 !important;
+}
+#brs51-status-panel .brs51-action-button:hover,
+#brs51-status-panel .brs51-answer-main:hover,
+.br-answer-list .brs51-answer-choice:hover,
+.br-task-list .brs51-task-choice:hover {
+    filter: brightness(1.12) !important;
+}
+.br-answer-list .brs51-answer-choice,
+.br-task-list .brs51-task-choice {
+    margin: 4px !important;
+    border-radius: 13px !important;
+    background: #222831 !important;
+    border: 1px solid #E6E6FA !important;
+}
+#brs51-status-panel .brs51-answer-main {
+    margin-left: 6px !important;
+    border-radius: 13px !important;
+    background-color: #FF4500 !important;
+    border: 1px solid #E6E6FA !important;
+}
 </style>
         `);
     }
@@ -1570,7 +1611,7 @@
 
     function resetOwnUiBeforeRender() {
         try {
-            $('#selectAnswers, #pin, #teamProject, #watched, #unaccept, #decided, #closed, #techspec, #odobreno').remove();
+            $('#brs51-select-answers, #brs51-pin, #brs51-teamProject, #brs51-watched, #brs51-unaccept, #brs51-decided, #brs51-closed, #brs51-techspec, #brs51-odobreno').remove();
             $('.br-status-line, .br-status-buttons').remove();
             $(document).off('.brForumButtons');
             $(document).off('.brForumAnswer');
@@ -1582,18 +1623,19 @@
 
 
 	// Добавление кнопок при загрузке страницы
-	addButton('На рассмотрение', 'pin', 'border-radius: 20px; margin-right: 11px; border: 2px solid; border-color: rgb(255, 165, 0);');
-	addButton('КП', 'teamProject', 'border-radius: 20px; margin-right: 100px; border: 2px solid; border-color: rgb(255, 255, 0);');
-	addButton('Рассмотрено', 'watched', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 255, 0);');
-	addButton('Отказано', 'unaccept', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(255, 0, 0);');
-	addButton('Решено', 'decided', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 255, 0);');
-	addButton('Закрыто', 'closed', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(255, 0, 0);');
-	addButton('Тех. спецу', 'techspec', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 0, 255);');
-  addButton('Одобрено', 'odobreno', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(128, 255, 128);');
+	addButton('На рассмотрение', 'brs51-pin', 'border-radius: 20px; margin-right: 11px; border: 2px solid; border-color: rgb(255, 165, 0);');
+	addButton('КП', 'brs51-teamProject', 'border-radius: 20px; margin-right: 100px; border: 2px solid; border-color: rgb(255, 255, 0);');
+	addButton('Рассмотрено', 'brs51-watched', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 255, 0);');
+	addButton('Отказано', 'brs51-unaccept', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(255, 0, 0);');
+	addButton('Решено', 'brs51-decided', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 255, 0);');
+	addButton('Закрыто', 'brs51-closed', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(255, 0, 0);');
+	addButton('Тех. спецу', 'brs51-techspec', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 0, 255);');
+  addButton('Одобрено', 'brs51-odobreno', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(128, 255, 128);');
 	addAnswers();
 
 	// Поиск информации о теме
 	const threadData = getThreadData();
+    bindBRS51DirectHandlers(threadData);
 
     $(document)
         .off('click.brForumButtons', 'button#ff')
@@ -1619,18 +1661,18 @@
             pasteContent(21, threadData, false);
         });
 
-    $(document).off('click.brForumButtons', 'button#unaccept').on('click.brForumButtons', 'button#unaccept', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(UNACCEPT_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#pin').on('click.brForumButtons', 'button#pin', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(PIN_PREFIX, true); });
-    $(document).off('click.brForumButtons', 'button#teamProject').on('click.brForumButtons', 'button#teamProject', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(COMMAND_PREFIX, true); });
-    $(document).off('click.brForumButtons', 'button#watched').on('click.brForumButtons', 'button#watched', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(WATCHED_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#decided').on('click.brForumButtons', 'button#decided', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(DECIDED_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#closed').on('click.brForumButtons', 'button#closed', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(CLOSE_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#odobreno').on('click.brForumButtons', 'button#odobreno', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(ODOBRENO_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#techspec').on('click.brForumButtons', 'button#techspec', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(TECHADM_PREFIX, true); });
+    $(document).off('click.brForumButtons', 'button#brs51-unaccept').on('click.brForumButtons', 'button#brs51-unaccept', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(UNACCEPT_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-pin').on('click.brForumButtons', 'button#brs51-pin', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(PIN_PREFIX, true); });
+    $(document).off('click.brForumButtons', 'button#brs51-teamProject').on('click.brForumButtons', 'button#brs51-teamProject', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(COMMAND_PREFIX, true); });
+    $(document).off('click.brForumButtons', 'button#brs51-watched').on('click.brForumButtons', 'button#brs51-watched', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(WATCHED_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-decided').on('click.brForumButtons', 'button#brs51-decided', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(DECIDED_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-closed').on('click.brForumButtons', 'button#brs51-closed', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(CLOSE_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-odobreno').on('click.brForumButtons', 'button#brs51-odobreno', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(ODOBRENO_PREFIX, false); });
+    $(document).off('click.brForumButtons', 'button#brs51-techspec').on('click.brForumButtons', 'button#brs51-techspec', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(TECHADM_PREFIX, true); });
 
     $(document)
-        .off('click.brForumButtons', 'button#selectAnswers')
-        .on('click.brForumButtons', 'button#selectAnswers', (e) => {
+        .off('click.brForumButtons', 'button#brs51-select-answers')
+        .on('click.brForumButtons', 'button#brs51-select-answers', (e) => {
             e.preventDefault();
             e.stopImmediatePropagation();
 
@@ -1673,6 +1715,80 @@
         });
     });
 
+
+
+    // Полная изоляция кнопок BRS51 от сторонних расширений форума.
+    function installBRS51Isolation() {
+        if (window.__BRS51_ISOLATION_INSTALLED__) return;
+        window.__BRS51_ISOLATION_INSTALLED__ = true;
+
+        const stopOwnButtonEvents = function (e) {
+            const target = e.target && e.target.closest && e.target.closest('#brs51-status-panel, .br-answer-list, .br-task-list');
+            if (!target) return;
+            e.stopPropagation();
+            if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+        };
+
+        ['mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart'].forEach(type => {
+            document.addEventListener(type, stopOwnButtonEvents, true);
+        });
+    }
+
+    installBRS51Isolation();
+
+
+    function bindBRS51DirectHandlers(threadData) {
+        const bind = (selector, fn) => {
+            $(selector).off('click.brs51direct').on('click.brs51direct', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                fn.call(this, e);
+                return false;
+            });
+        };
+
+        bind('#brs51-unaccept', () => editThreadData(UNACCEPT_PREFIX, false));
+        bind('#brs51-pin', () => editThreadData(PIN_PREFIX, true));
+        bind('#brs51-teamProject', () => editThreadData(COMMAND_PREFIX, true));
+        bind('#brs51-watched', () => editThreadData(WATCHED_PREFIX, false));
+        bind('#brs51-decided', () => editThreadData(DECIDED_PREFIX, false));
+        bind('#brs51-closed', () => editThreadData(CLOSE_PREFIX, false));
+        bind('#brs51-odobreno', () => editThreadData(ODOBRENO_PREFIX, false));
+        bind('#brs51-techspec', () => editThreadData(TECHADM_PREFIX, true));
+
+        bind('#brs51-select-answers', () => {
+            XF.alert(buttonsMarkup(buttons), null, 'Выберите ответ:');
+            setTimeout(() => {
+                $('.br-answer-choice').off('click.brs51direct').on('click.brs51direct', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+
+                    const id = Number($(this).attr('data-answer-id'));
+                    if (!Number.isInteger(id) || !buttons[id] || !buttons[id].content) return false;
+
+                    pasteContent(id, threadData, id > 6);
+                    return false;
+                });
+            }, 0);
+        });
+
+        bind('#selectMoveTasks', () => {
+            XF.alert(tasksMarkup1(tasks), null, 'Выберите действие:');
+            setTimeout(() => {
+                $('.br-task-choice').off('click.brs51direct').on('click.brs51direct', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    const id = Number($(this).attr('data-task-id'));
+                    if (!Number.isInteger(id) || !tasks[id]) return false;
+                    moveThread(tasks[id].prefix, tasks[id].move);
+                    return false;
+                });
+            }, 0);
+        });
+    }
 
     function getMainReplyButton() {
         const candidates = $('.button--icon--reply').filter(function () {
@@ -1791,7 +1907,7 @@
 
         let line = $('.br-status-line').first();
         if (!line.length) {
-            line = $('<div class="br-status-line"></div>');
+            line = $('<div id="brs51-status-panel" class="br-status-line"></div>');
         }
 
         // Если линия случайно попала в ряд штатных кнопок — переносим её под редактор.
@@ -1801,12 +1917,12 @@
 
         let wrap = line.find('.br-status-buttons').first();
         if (!wrap.length) {
-            wrap = $('<span class="br-status-buttons"></span>');
+            wrap = $('<span class="br-status-buttons" data-brs51="status-buttons"></span>');
             line.prepend(wrap);
         }
 
-        if (!line.find('#selectAnswers').length && $('#selectAnswers').length) {
-            line.append($('#selectAnswers'));
+        if (!line.find('#brs51-select-answers').length && $('#brs51-select-answers').length) {
+            line.append($('#brs51-select-answers'));
         }
 
         return line;
@@ -1825,12 +1941,12 @@
         if (!wrap.length) return;
 
         wrap.append(
-            `<button type="button" class="button--primary button rippleButton" id="${id}" style="background: transparent; ${style}">${name}</button>`
+            `<button type="button" class="brs51-action-button" data-brs51-button="1" id="${id}" style="background: transparent; ${style}">${name}</button>`
         );
     }
 
     function addAnswers() {
-        if ($('#selectAnswers').length) {
+        if ($('#brs51-select-answers').length) {
             ensureStatusLine();
             return;
         }
@@ -1839,7 +1955,7 @@
         if (!line.length) return;
 
         line.append(
-            `<button type="button" class="button--cta uix_quickReply--button button button--icon button--icon--write rippleButton" id="selectAnswers" style="oswald: 3px; margin-left: 5px; margin-top: 1px; border-radius: 13px; background-color: #FF4500; border-color: #E6E6FA">Ответы</button>`
+            `<button type="button" class="brs51-answer-main" data-brs51-button="1" id="brs51-select-answers" style="oswald: 3px; margin-left: 5px; margin-top: 1px; border-radius: 13px; background-color: #FF4500; border-color: #E6E6FA">Ответы</button>`
         );
     }
 
@@ -1852,7 +1968,7 @@
                     return `<div class="br-answer-header" style="margin:6px 4px; padding:7px 10px; border-radius: 10px; font-weight: 800; text-align:center; ${style}">${title}</div>`;
                 }
 
-                return `<button type="button" data-answer-id="${i}" class="button--primary button rippleButton br-answer-choice" style="margin:4px; border-radius: 13px; ${style}"><span class="button-text">${title}</span></button>`;
+                return `<button type="button" data-answer-id="${i}" class="brs51-answer-choice br-answer-choice" style="margin:4px; border-radius: 13px; ${style}"><span class="button-text">${title}</span></button>`;
             })
             .join('')}</div>`;
     }
@@ -1860,7 +1976,7 @@
     function tasksMarkup(buttons) {
         return `<div class="select_answer br-task-list">${buttons
             .map((btn, i) =>
-                `<button type="button" data-task-id="${i}" class="button--primary button rippleButton br-task-choice" style="margin:5px; border-radius: 13px; margin-right: 5px; border: 1px solid; border-color: #E6E6FA; background-color: ${btn.color || "#000000"}"><span class="button-text">${btn.title}</span></button>`,
+                `<button type="button" data-task-id="${i}" class="brs51-task-choice br-task-choice" style="margin:5px; border-radius: 13px; margin-right: 5px; border: 1px solid; border-color: #E6E6FA; background-color: ${btn.color || "#000000"}"><span class="button-text">${btn.title}</span></button>`,
             )
             .join('')}</div>`;
     }
