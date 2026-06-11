@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    const BR_SCRIPT_VERSION = '2026-06-11-add-foreign-binding';
-    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-11-add-foreign-binding-001';
+    const BR_SCRIPT_VERSION = '2026-06-11-foreign-binding-format-v2';
+    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-11-foreign-binding-format-v2-001';
     const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_version';
     const BR_SCRIPT_DOWNLOAD_URL = 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/my-tech-loader.user.js';
 
@@ -1031,13 +1031,13 @@
     title: 'Чужая привязка',
     color: '',
     content:
-    "[CENTER][COLOR=rgb(209, 213, 216)][FONT=Verdana][SIZE=15px][CENTER]Здравствуйте, уважаемый [/COLOR][COLOR=rgb(255, 204, 0)]{{ user.name }}[/COLOR].[/CENTER][/CENTER]<br><br>" +
+    "[CENTER][COLOR=rgb(209, 213, 216)][FONT=Verdana][SIZE=15px][CENTER]{{ greeting }}, уважаемый [/COLOR][COLOR=rgb(255, 204, 0)]{{ user.name }}[/COLOR].[/CENTER]<br><br>" +
     '[CENTER][img]https://i.postimg.cc/tgD5Xwhj/1618083711121.png[/img][/CENTER]<br>' +
-    '[CENTER][B][FONT=verdana][COLOR=rgb(255, 255, 255)]После проверки системы логирования, по вашему обращению. На момент взлома на аккаунт была установлена новая привязка, которая не относится к владельцу аккаунта.[/COLOR][/FONT][/B][/CENTER]<br><br>' +
+    '[CENTER][B][FONT=verdana][COLOR=rgb(255, 255, 255)]После проверки системы логирования по вашему обращению было выявлено, что на момент взлома на аккаунт была установлена новая привязка, которая не относится к владельцу аккаунта.[/COLOR][/FONT][/B][/CENTER]<br><br>' +
     '[CENTER][B][FONT=verdana][COLOR=rgb(255, 255, 255)]Так как аккаунт теперь закреплён за чужими данными, восстановить или оставить его в использовании невозможно. Аккаунт будет заблокирован.[/COLOR][/FONT][/B][/CENTER]<br><br>' +
     '[CENTER][B][FONT=verdana][COLOR=rgb(255, 255, 255)]Никому не передавайте пароль и другие данные от аккаунта. Администрация не просит такую информацию у игроков.[/COLOR][/FONT][/B][/CENTER]<br>' +
     '[CENTER][img]https://i.postimg.cc/tgD5Xwhj/1618083711121.png[/img][/CENTER]<br>' +
-    '[CENTER][B][I][FONT=verdana][COLOR=rgb(255, 0, 0)]Закрыто[/COLOR][/FONT][/I][/B][/CENTER]',
+    '[B][I][FONT=verdana][COLOR=rgb(255, 0, 0)]Закрыто[/COLOR][/FONT][/I][/B]',
     prefix: CLOSE_PREFIX,
     status: false,
 },
