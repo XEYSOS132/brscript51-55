@@ -1,9 +1,9 @@
 (function () {
     'use strict';
 
-    const BR_SCRIPT_VERSION = '2026-06-11-fix-16';
-    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-11-neutral-ui-v16-001';
-    const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_build_id';
+    const BR_SCRIPT_VERSION = '2026-06-11-rollback-v10-base';
+    const BR_SCRIPT_BUILD_ID = 'br-build-2026-06-11-rollback-before-extension-isolation-001';
+    const BR_SCRIPT_UPDATE_KEY = 'br_script_seen_update_version';
     const BR_SCRIPT_DOWNLOAD_URL = 'https://raw.githubusercontent.com/s4loed-blip/brscript51-55/main/my-tech-loader.user.js';
 
 
@@ -99,11 +99,11 @@
 
     function showScriptUpdateNotice() {
         try {
-            if (localStorage.getItem(BR_SCRIPT_UPDATE_KEY) === BR_SCRIPT_BUILD_ID) return;
+            if (localStorage.getItem(BR_SCRIPT_UPDATE_KEY) === BR_SCRIPT_VERSION) return;
 
             const renderNotice = () => {
                 if (!document.body) return;
-                if (localStorage.getItem(BR_SCRIPT_UPDATE_KEY) === BR_SCRIPT_BUILD_ID) return;
+                if (localStorage.getItem(BR_SCRIPT_UPDATE_KEY) === BR_SCRIPT_VERSION) return;
 
                 const old = document.querySelector('#br-script-update-notice');
                 if (old) old.remove();
@@ -115,20 +115,20 @@
                 style.id = 'br-update-style';
                 style.textContent = `
                     #br-script-update-notice{position:fixed!important;inset:0!important;display:flex!important;align-items:center!important;justify-content:center!important;background:rgba(0,0,0,.46)!important;backdrop-filter:blur(3px)!important;z-index:2147483647!important;font-family:Arial,sans-serif!important}
-                    #br-script-update-notice .br-update-card{position:relative!important;width:440px!important;max-width:calc(100vw - 28px)!important;padding:18px!important;border-radius:18px!important;background:linear-gradient(145deg,#252a31 0%,#171a1f 100%)!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:none!important;color:#fff!important;overflow:hidden!important}
-                    #br-script-update-notice .br-update-card:before{content:''!important;position:absolute!important;left:-80px!important;top:-80px!important;width:220px!important;height:220px!important;background:none!important;pointer-events:none!important}
+                    #br-script-update-notice .br-update-card{position:relative!important;width:440px!important;max-width:calc(100vw - 28px)!important;padding:18px!important;border-radius:18px!important;background:linear-gradient(145deg,#252a31 0%,#171a1f 100%)!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 24px 70px rgba(0,0,0,.75),0 0 0 1px rgba(255,69,0,.18) inset!important;color:#fff!important;overflow:hidden!important}
+                    #br-script-update-notice .br-update-card:before{content:''!important;position:absolute!important;left:-80px!important;top:-80px!important;width:220px!important;height:220px!important;background:radial-gradient(circle,rgba(255,69,0,.42),transparent 65%)!important;pointer-events:none!important}
                     #br-script-update-notice .br-update-close{position:absolute!important;right:12px!important;top:10px!important;width:30px!important;height:30px!important;border-radius:10px!important;border:1px solid rgba(255,255,255,.16)!important;background:rgba(255,255,255,.06)!important;color:#fff!important;font-size:21px!important;line-height:25px!important;cursor:pointer!important}
                     #br-script-update-notice .br-update-head{position:relative!important;display:flex!important;gap:12px!important;align-items:center!important;margin-bottom:16px!important}
-                    #br-script-update-notice .br-update-icon{width:46px!important;height:46px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:15px!important;background:rgba(255,255,255,.08)!important;box-shadow:none!important;font-size:24px!important}
+                    #br-script-update-notice .br-update-icon{width:46px!important;height:46px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:15px!important;background:linear-gradient(135deg,#ff4500,#f59e0b)!important;box-shadow:0 0 24px rgba(255,69,0,.45)!important;font-size:24px!important}
                     #br-script-update-notice .br-update-title{font-size:20px!important;line-height:1.15!important;font-weight:900!important;letter-spacing:.2px!important}
                     #br-script-update-notice .br-update-subtitle{margin-top:3px!important;font-size:12px!important;color:#b8c0cc!important;font-weight:700!important}
                     #br-script-update-notice .br-update-body{position:relative!important;padding:13px!important;border-radius:14px!important;background:rgba(255,255,255,.055)!important;border:1px solid rgba(255,255,255,.08)!important}
-                    #br-script-update-notice .br-update-badge{display:inline-flex!important;padding:4px 9px!important;margin-bottom:9px!important;border-radius:999px!important;background:rgba(255,255,255,.07)!important;color:#d7d7d7!important;border:1px solid rgba(255,255,255,.12)!important;font-size:11px!important;font-weight:900!important;text-transform:uppercase!important}
+                    #br-script-update-notice .br-update-badge{display:inline-flex!important;padding:4px 9px!important;margin-bottom:9px!important;border-radius:999px!important;background:rgba(34,197,94,.15)!important;color:#86efac!important;border:1px solid rgba(34,197,94,.28)!important;font-size:11px!important;font-weight:900!important;text-transform:uppercase!important}
                     #br-script-update-notice .br-update-list{display:grid!important;gap:7px!important;font-size:13px!important;line-height:1.35!important;color:#e5e7eb!important;font-weight:700!important}
-                    #br-script-update-notice .br-update-list span{color:#d7d7d7!important;font-weight:900!important;margin-right:6px!important}
+                    #br-script-update-notice .br-update-list span{color:#22c55e!important;font-weight:900!important;margin-right:6px!important}
                     #br-script-update-notice .br-update-actions{display:flex!important;gap:9px!important;margin-top:15px!important}
                     #br-script-update-notice .br-update-download,#br-script-update-notice .br-update-later{height:38px!important;padding:0 14px!important;border-radius:12px!important;font-weight:900!important;cursor:pointer!important}
-                    #br-script-update-notice .br-update-download{flex:1!important;border:0!important;color:#fff!important;background:rgba(255,255,255,.08)!important;box-shadow:none!important;border:1px solid rgba(255,255,255,.14)!important}
+                    #br-script-update-notice .br-update-download{flex:1!important;border:0!important;color:#fff!important;background:linear-gradient(135deg,#ff4500,#f97316)!important;box-shadow:0 10px 25px rgba(255,69,0,.25)!important}
                     #br-script-update-notice .br-update-later{border:1px solid rgba(255,255,255,.16)!important;background:rgba(255,255,255,.06)!important;color:#d1d5db!important}
                     #br-script-update-notice .br-update-footer{margin-top:10px!important;color:#9ca3af!important;font-size:11px!important;font-weight:700!important;text-align:center!important}
                 `;
@@ -143,7 +143,7 @@
                             <div class="br-update-icon">⚡</div>
                             <div>
                                 <div class="br-update-title">BR Script обновлён</div>
-                                <div class="br-update-subtitle">Новая сборка готова к установке</div>
+                                <div class="br-update-subtitle">Новая сборка готова к установке — обновлён loader</div>
                             </div>
                         </div>
                         <div class="br-update-body">
@@ -152,21 +152,21 @@
                                 <div><span>✓</span> Кнопки статусов выровнены нормальной строкой</div>
                                 <div><span>✓</span> Блок «Недавно» больше не мешает под формой ответа</div>
                                 <div><span>✓</span> Панель управления теперь запускается быстрее через кэш loader</div>
-                                <div><span>✓</span> Уведомление теперь работает по BUILD_ID, а не по визуальной версии</div>
+                                <div><span>✓</span> Loader обновлён: Tampermonkey больше не должен писать «код такой же»</div>
                             </div>
                         </div>
                         <div class="br-update-actions">
                             <button id="br-script-update-download" class="br-update-download" type="button">Скачать обновление</button>
                             <button id="br-script-update-later" class="br-update-later" type="button">Позже</button>
                         </div>
-                        <div class="br-update-footer">Нажми «Скачать обновление». Окно появится снова только при новом BUILD_ID.</div>
+                        <div class="br-update-footer">Сначала обнови loader, потом forum-buttons.js. Окно скроется до следующей версии.</div>
                     </div>
                 `;
                 document.body.appendChild(overlay);
 
                 const closeOnly = () => overlay.remove();
                 const markDownloaded = () => {
-                    localStorage.setItem(BR_SCRIPT_UPDATE_KEY, BR_SCRIPT_BUILD_ID);
+                    localStorage.setItem(BR_SCRIPT_UPDATE_KEY, BR_SCRIPT_VERSION);
                     window.open(BR_SCRIPT_DOWNLOAD_URL + '?v=' + encodeURIComponent(BR_SCRIPT_VERSION) + '&b=' + encodeURIComponent(BR_SCRIPT_BUILD_ID), '_blank');
                     overlay.remove();
                 };
@@ -656,7 +656,7 @@
                     }
 
                     .br-menu-dept-title {
-                        color: #d7d7d7 !important;
+                        color: #fbbf24 !important;
                         font-size: 11px !important;
                         font-weight: 800 !important;
                         letter-spacing: 0.3px !important;
@@ -690,13 +690,13 @@
                     }
 
                     .br-menu-server.selected {
-                        background: rgba(255,255,255,.10) !important;
+                        background: rgba(37, 99, 235, 0.28) !important;
                         color: #fff !important;
                     }
 
                     .br-menu-server.selected::before {
                         content: '✓' !important;
-                        color: #d7d7d7 !important;
+                        color: #60a5fa !important;
                         margin-right: 7px !important;
                     }
 
@@ -708,7 +708,7 @@
 
                     .br-menu-divider.small {
                         margin: 7px 0 4px !important;
-                        background: rgba(255,255,255,.08) !important;
+                        background: rgba(245,158,11,0.18) !important;
                     }
 
                     .br-menu-ops {
@@ -718,9 +718,9 @@
                         min-height: 31px !important;
                         padding: 0 8px !important;
                         box-sizing: border-box !important;
-                        background: rgba(255,255,255,.06) !important;
-                        color: #d7d7d7 !important;
-                        border-left: 3px solid rgba(255,255,255,.14) !important;
+                        background: rgba(245,158,11,0.16) !important;
+                        color: #fbbf24 !important;
+                        border-left: 3px solid #f59e0b !important;
                         border-radius: 4px !important;
                         font-size: 12px !important;
                         font-weight: 700 !important;
@@ -728,7 +728,7 @@
                     }
 
                     .br-menu-ops:hover {
-                        background: rgba(255,255,255,.10) !important;
+                        background: rgba(245,158,11,0.28) !important;
                         color: #fff !important;
                         text-decoration: none !important;
                     }
@@ -840,9 +840,8 @@
         console.error('[BR Script] Panel Error:', e);
     }
 
-	if (window.__BRS51_FORUM_BUTTONS_ACTIVE__ === BR_SCRIPT_VERSION) return;
-    window.__BRS51_FORUM_BUTTONS_ACTIVE__ = BR_SCRIPT_VERSION;
-    document.body.dataset.forumButtonsLoaded = BR_SCRIPT_VERSION;
+	if (document.body.dataset.forumButtonsLoaded) return;
+    document.body.dataset.forumButtonsLoaded = 'true';
 	const UNACCEPT_PREFIX = 4; // префикс отказано
   const ODOBRENO_PREFIX = 8; // префикс одобрено
 	const PIN_PREFIX = 2; //  префикс закрепить
@@ -936,7 +935,7 @@
 
 {
   title: 'ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ  ᅠᅠ ᅠ ЖАЛОБЫ НА ТЕХ. СПЕЦОВ ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠ  ᅠ ',
-  dpstyle: 'oswald: 3px; color:#d7d7d7; background:rgba(255,255,255,.06); box-shadow:none; border:1px solid rgba(255,255,255,.12)',
+  dpstyle: 'oswald: 3px;     color: #fff; background: #db2309; box-shadow: 0 0 2px 0 rgba(0,0,0,0.14),0 2px 2px 0 rgba(0,0,0,0.12),0 1px 3px 0 rgba(0,0,0,0.2); border: none; border-color: #f53317',
     },
 
 {
@@ -1042,7 +1041,7 @@
 },
 	{
   title: ' ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠᅠ ᅠ Технический раздел ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠᅠ  ᅠ ᅠ ᅠ ᅠ ᅠ  ᅠ ᅠ ',
-  dpstyle: 'oswald: 3px; color:#d7d7d7; background:rgba(255,255,255,.06); box-shadow:none; border:1px solid rgba(255,255,255,.12)',
+  dpstyle: 'oswald: 3px;     color: #fff; background: #db2309; box-shadow: 0 0 2px 0 rgba(0,0,0,0.14),0 2px 2px 0 rgba(0,0,0,0.12),0 1px 3px 0 rgba(0,0,0,0.2); border: none; border-color: #f53317',
     },
 {
 	title: 'Форма подачи ТР',
@@ -1473,7 +1472,7 @@
 
 {
   title: 'ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠᅠ ᅠ ЖАЛОБЫ НА ИГРОКОВ ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ ᅠ     ',
-  dpstyle: 'oswald: 3px; color:#d7d7d7; background:rgba(255,255,255,.06); box-shadow:none; border:1px solid rgba(255,255,255,.12)',
+  dpstyle: 'oswald: 3px;     color: #fff; background: #db2309; box-shadow: 0 0 2px 0 rgba(0,0,0,0.14),0 2px 2px 0 rgba(0,0,0,0.12),0 1px 3px 0 rgba(0,0,0,0.2); border: none; border-color: #f53317',
     },
 {
 	title: 'Игрок будет заблокирован',
@@ -1564,231 +1563,56 @@
 .block-outer .br-status-buttons {
     display: none !important;
 }
-
-#brs51-status-panel { isolation: isolate !important; }
-#brs51-status-panel .brs51-action-button,
-#brs51-status-panel .brs51-answer-main,
-.br-answer-list .brs51-answer-choice,
-.br-task-list .brs51-task-choice {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-height: 30px !important;
-    padding: 0 12px !important;
-    color: #fff !important;
-    font-family: inherit !important;
-    font-size: 12px !important;
-    font-weight: 800 !important;
-    text-decoration: none !important;
-    cursor: pointer !important;
-    user-select: none !important;
-    box-sizing: border-box !important;
-    line-height: 1 !important;
-}
-#brs51-status-panel .brs51-action-button:hover,
-#brs51-status-panel .brs51-answer-main:hover,
-.br-answer-list .brs51-answer-choice:hover,
-.br-task-list .brs51-task-choice:hover {
-    background: rgba(255,255,255,.10) !important;
-}
-.br-answer-list .brs51-answer-choice,
-.br-task-list .brs51-task-choice {
-    margin: 4px !important;
-    border-radius: 13px !important;
-    background: rgba(255,255,255,.06) !important;
-    border: 1px solid rgba(255,255,255,.14) !important;
-}
-#brs51-status-panel .brs51-answer-main {
-    margin-left: 6px !important;
-    border-radius: 13px !important;
-    background: rgba(255,255,255,.06) !important;
-    border: 1px solid rgba(255,255,255,.14) !important;
-}
 </style>
         `);
     }
 
 
-    function resetOwnUiBeforeRender() {
-        try {
-            $('#brs51-select-answers, #brs51-pin, #brs51-teamProject, #brs51-watched, #brs51-unaccept, #brs51-decided, #brs51-closed, #brs51-techspec, #brs51-odobreno').remove();
-            $('.br-status-line, .br-status-buttons').remove();
-            $(document).off('.brForumButtons');
-            $(document).off('.brForumAnswer');
-            $(document).off('.brForumTasks');
-        } catch (e) {}
-    }
-
-    resetOwnUiBeforeRender();
-
-
 	// Добавление кнопок при загрузке страницы
-	addButton('На рассмотрение', 'brs51-pin', 'border-radius: 13px; margin-right: 5px; border: 1px solid rgba(255,255,255,.14); color: #d7d7d7;');
-	addButton('КП', 'brs51-teamProject', 'border-radius: 13px; margin-right: 5px; border: 1px solid rgba(255,255,255,.14); color: #d7d7d7;');
-	addButton('Рассмотрено', 'brs51-watched', 'border-radius: 13px; margin-right: 5px; border: 1px solid rgba(255,255,255,.14); color: #d7d7d7;');
-	addButton('Отказано', 'brs51-unaccept', 'border-radius: 13px; margin-right: 5px; border: 1px solid rgba(255,255,255,.14); color: #d7d7d7;');
-	addButton('Решено', 'brs51-decided', 'border-radius: 13px; margin-right: 5px; border: 1px solid rgba(255,255,255,.14); color: #d7d7d7;');
-	addButton('Закрыто', 'brs51-closed', 'border-radius: 13px; margin-right: 5px; border: 1px solid rgba(255,255,255,.14); color: #d7d7d7;');
-	addButton('Тех. спецу', 'brs51-techspec', 'border-radius: 13px; margin-right: 5px; border: 1px solid rgba(255,255,255,.14); color: #d7d7d7;');
-  addButton('Одобрено', 'brs51-odobreno', 'border-radius: 13px; margin-right: 5px; border: 1px solid rgba(255,255,255,.14); color: #d7d7d7;');
+	addButton('На рассмотрение', 'pin', 'border-radius: 20px; margin-right: 11px; border: 2px solid; border-color: rgb(255, 165, 0);');
+	addButton('КП', 'teamProject', 'border-radius: 20px; margin-right: 100px; border: 2px solid; border-color: rgb(255, 255, 0);');
+	addButton('Рассмотрено', 'watched', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 255, 0);');
+	addButton('Отказано', 'unaccept', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(255, 0, 0);');
+	addButton('Решено', 'decided', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 255, 0);');
+	addButton('Закрыто', 'closed', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(255, 0, 0);');
+	addButton('Тех. спецу', 'techspec', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(0, 0, 255);');
+  addButton('Одобрено', 'odobreno', 'border-radius: 13px; margin-right: 5px; border: 2px solid; border-color: rgb(128, 255, 128);');
 	addAnswers();
 
 	// Поиск информации о теме
 	const threadData = getThreadData();
-    bindBRS51DirectHandlers(threadData);
 
-    $(document)
-        .off('click.brForumButtons', 'button#ff')
-        .on('click.brForumButtons', 'button#ff', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            pasteContent(8, threadData, true);
-        });
+	$(`button#ff`).click(() => pasteContent(8, threadData, true));
+	$(`button#prr`).click(() => pasteContent(2, threadData, true));
+	$(`button#zhb`).click(() => pasteContent(21, threadData, false));
+	$('button#unaccept').click(() => editThreadData(UNACCEPT_PREFIX, false));
+	$('button#pin').click(() => editThreadData(PIN_PREFIX, true));
+	$('button#teamProject').click(() => editThreadData(COMMAND_PREFIX, true));
+	$('button#watched').click(() => editThreadData(WATCHED_PREFIX, false));
+	$('button#decided').click(() => editThreadData(DECIDED_PREFIX, false));
+	$('button#closed').click(() => editThreadData(CLOSE_PREFIX, false));
+	$('button#odobreno').click(() => editThreadData(ODOBRENO_PREFIX, false));
+	$('button#techspec').click(() => editThreadData(TECHADM_PREFIX, true));
 
-    $(document)
-        .off('click.brForumButtons', 'button#prr')
-        .on('click.brForumButtons', 'button#prr', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            pasteContent(2, threadData, true);
-        });
-
-    $(document)
-        .off('click.brForumButtons', 'button#zhb')
-        .on('click.brForumButtons', 'button#zhb', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            pasteContent(21, threadData, false);
-        });
-
-    $(document).off('click.brForumButtons', 'button#brs51-unaccept').on('click.brForumButtons', 'button#brs51-unaccept', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(UNACCEPT_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#brs51-pin').on('click.brForumButtons', 'button#brs51-pin', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(PIN_PREFIX, true); });
-    $(document).off('click.brForumButtons', 'button#brs51-teamProject').on('click.brForumButtons', 'button#brs51-teamProject', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(COMMAND_PREFIX, true); });
-    $(document).off('click.brForumButtons', 'button#brs51-watched').on('click.brForumButtons', 'button#brs51-watched', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(WATCHED_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#brs51-decided').on('click.brForumButtons', 'button#brs51-decided', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(DECIDED_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#brs51-closed').on('click.brForumButtons', 'button#brs51-closed', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(CLOSE_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#brs51-odobreno').on('click.brForumButtons', 'button#brs51-odobreno', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(ODOBRENO_PREFIX, false); });
-    $(document).off('click.brForumButtons', 'button#brs51-techspec').on('click.brForumButtons', 'button#brs51-techspec', (e) => { e.preventDefault(); e.stopImmediatePropagation(); editThreadData(TECHADM_PREFIX, true); });
-
-    $(document)
-        .off('click.brForumButtons', 'button#brs51-select-answers')
-        .on('click.brForumButtons', 'button#brs51-select-answers', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
+	$(`button#selectAnswers`).click(() => {
             XF.alert(buttonsMarkup(buttons), null, 'Выберите ответ:');
-
-            $(document)
-                .off('click.brForumAnswer', '.br-answer-choice')
-                .on('click.brForumAnswer', '.br-answer-choice', function (ev) {
-                    ev.preventDefault();
-                    ev.stopImmediatePropagation();
-
-                    const id = Number($(this).attr('data-answer-id'));
-                    if (!Number.isInteger(id) || !buttons[id] || !buttons[id].content) return;
-
-                    pasteContent(id, threadData, id > 6);
-                    $(document).off('click.brForumAnswer', '.br-answer-choice');
-                });
+            buttons.forEach((btn, id) => {
+                if (id > 6) {
+                    $(`button#answers-${id}`).click(() => pasteContent(id, threadData, true));
+                } else {
+                    $(`button#answers-${id}`).click(() => pasteContent(id, threadData, false));
+                }
+            });
         });
 
-    $(document)
-        .off('click.brForumButtons', 'button#selectMoveTasks')
-        .on('click.brForumButtons', 'button#selectMoveTasks', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
+        $(`button#selectMoveTasks`).click(() => {
             XF.alert(tasksMarkup1(tasks), null, 'Выберите действие:');
-
-            $(document)
-                .off('click.brForumTasks', '.br-task-choice')
-                .on('click.brForumTasks', '.br-task-choice', function (ev) {
-                    ev.preventDefault();
-                    ev.stopImmediatePropagation();
-
-                    const id = Number($(this).attr('data-task-id'));
-                    if (!Number.isInteger(id) || !tasks[id]) return;
-
-                    moveThread(tasks[id].prefix, tasks[id].move);
-                    $(document).off('click.brForumTasks', '.br-task-choice');
-                });
+            tasks.forEach((btn, id) => {
+                $(`button#answers-${id}`).click(() => moveThread(tasks[id].prefix, tasks[id].move));
+            });
         });
     });
 
-
-
-    // Полная изоляция кнопок BRS51 от сторонних расширений форума.
-    function installBRS51Isolation() {
-        if (window.__BRS51_ISOLATION_INSTALLED__) return;
-        window.__BRS51_ISOLATION_INSTALLED__ = true;
-
-        const stopOwnButtonEvents = function (e) {
-            const target = e.target && e.target.closest && e.target.closest('#brs51-status-panel, .br-answer-list, .br-task-list');
-            if (!target) return;
-            e.stopPropagation();
-            if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
-        };
-
-        ['mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart'].forEach(type => {
-            document.addEventListener(type, stopOwnButtonEvents, true);
-        });
-    }
-
-    installBRS51Isolation();
-
-
-    function bindBRS51DirectHandlers(threadData) {
-        const bind = (selector, fn) => {
-            $(selector).off('click.brs51direct').on('click.brs51direct', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                fn.call(this, e);
-                return false;
-            });
-        };
-
-        bind('#brs51-unaccept', () => editThreadData(UNACCEPT_PREFIX, false));
-        bind('#brs51-pin', () => editThreadData(PIN_PREFIX, true));
-        bind('#brs51-teamProject', () => editThreadData(COMMAND_PREFIX, true));
-        bind('#brs51-watched', () => editThreadData(WATCHED_PREFIX, false));
-        bind('#brs51-decided', () => editThreadData(DECIDED_PREFIX, false));
-        bind('#brs51-closed', () => editThreadData(CLOSE_PREFIX, false));
-        bind('#brs51-odobreno', () => editThreadData(ODOBRENO_PREFIX, false));
-        bind('#brs51-techspec', () => editThreadData(TECHADM_PREFIX, true));
-
-        bind('#brs51-select-answers', () => {
-            XF.alert(buttonsMarkup(buttons), null, 'Выберите ответ:');
-            setTimeout(() => {
-                $('.br-answer-choice').off('click.brs51direct').on('click.brs51direct', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-
-                    const id = Number($(this).attr('data-answer-id'));
-                    if (!Number.isInteger(id) || !buttons[id] || !buttons[id].content) return false;
-
-                    pasteContent(id, threadData, id > 6);
-                    return false;
-                });
-            }, 0);
-        });
-
-        bind('#selectMoveTasks', () => {
-            XF.alert(tasksMarkup1(tasks), null, 'Выберите действие:');
-            setTimeout(() => {
-                $('.br-task-choice').off('click.brs51direct').on('click.brs51direct', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    const id = Number($(this).attr('data-task-id'));
-                    if (!Number.isInteger(id) || !tasks[id]) return false;
-                    moveThread(tasks[id].prefix, tasks[id].move);
-                    return false;
-                });
-            }, 0);
-        });
-    }
 
     function getMainReplyButton() {
         const candidates = $('.button--icon--reply').filter(function () {
@@ -1907,7 +1731,7 @@
 
         let line = $('.br-status-line').first();
         if (!line.length) {
-            line = $('<div id="brs51-status-panel" class="br-status-line"></div>');
+            line = $('<div class="br-status-line"></div>');
         }
 
         // Если линия случайно попала в ряд штатных кнопок — переносим её под редактор.
@@ -1917,12 +1741,12 @@
 
         let wrap = line.find('.br-status-buttons').first();
         if (!wrap.length) {
-            wrap = $('<span class="br-status-buttons" data-brs51="status-buttons"></span>');
+            wrap = $('<span class="br-status-buttons"></span>');
             line.prepend(wrap);
         }
 
-        if (!line.find('#brs51-select-answers').length && $('#brs51-select-answers').length) {
-            line.append($('#brs51-select-answers'));
+        if (!line.find('#selectAnswers').length && $('#selectAnswers').length) {
+            line.append($('#selectAnswers'));
         }
 
         return line;
@@ -1941,12 +1765,12 @@
         if (!wrap.length) return;
 
         wrap.append(
-            `<button type="button" class="brs51-action-button" data-brs51-button="1" id="${id}" style="background: transparent; ${style}">${name}</button>`
+            `<button type="button" class="button--primary button rippleButton" id="${id}" style="background: transparent; ${style}">${name}</button>`
         );
     }
 
     function addAnswers() {
-        if ($('#brs51-select-answers').length) {
+        if ($('#selectAnswers').length) {
             ensureStatusLine();
             return;
         }
@@ -1955,29 +1779,26 @@
         if (!line.length) return;
 
         line.append(
-            `<button type="button" class="brs51-answer-main" data-brs51-button="1" id="brs51-select-answers" style="oswald: 3px; margin-left: 5px; margin-top: 1px; border-radius: 13px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); color: #d7d7d7">Ответы</button>`
+            `<button type="button" class="button--cta uix_quickReply--button button button--icon button--icon--write rippleButton" id="selectAnswers" style="oswald: 3px; margin-left: 5px; margin-top: 1px; border-radius: 13px; background-color: #FF4500; border-color: #E6E6FA">Ответы</button>`
         );
     }
 
     function buttonsMarkup(buttons) {
-        return `<div class="select_answer br-answer-list">${buttons
-            .map((btn, i) => {
-                const title = btn && btn.title ? btn.title : `Ответ ${i}`;
-                const style = btn && btn.dpstyle ? btn.dpstyle : '';
-                if (!btn || !btn.content) {
-                    return `<div class="br-answer-header" style="margin:6px 4px; padding:7px 10px; border-radius: 10px; font-weight: 800; text-align:center; ${style}">${title}</div>`;
-                }
-
-                return `<button type="button" data-answer-id="${i}" class="brs51-answer-choice br-answer-choice" style="margin:4px; border-radius: 13px; ${style}"><span class="button-text">${title}</span></button>`;
-            })
-            .join('')}</div>`;
-    }
+    return `<div class="select_answer">${buttons
+        .map(
+        (btn, i) =>
+        `<button id="answers-${i}" class="button--primary button rippleButton" style="margin:4px; border-radius: 13px; ${btn.dpstyle}"><span class="button-text">${btn.title}</span></button>`,
+    )
+        .join('')}</div>`;
+}
 
     function tasksMarkup(buttons) {
-        return `<div class="select_answer br-task-list">${buttons
-            .map((btn, i) =>
-                `<button type="button" data-task-id="${i}" class="brs51-task-choice br-task-choice" style="margin:5px; border-radius: 13px; margin-right: 5px; border: 1px solid; border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.06); color: #d7d7d7"><span class="button-text">${btn.title}</span></button>`,
-            )
+        return `<div class="select_answer">${buttons
+            .map(
+            (btn, i) =>
+            `<button id="answers-${i}" class="button--primary button ` +
+            `rippleButton" style="margin:5px; border-radius: 13px; margin-right: 5px; border: 1px solid; border-color: #E6E6FA; background-color: ${btn.color || "#000000"}"><span class="button-text">${btn.title}</span></button>`,
+        )
             .join('')}</div>`;
     }
 
